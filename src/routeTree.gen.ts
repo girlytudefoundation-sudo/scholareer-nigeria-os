@@ -14,6 +14,7 @@ import { Route as ShellRouteImport } from './routes/_shell'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ShellClassesRouteImport } from './routes/_shell/classes'
 import { Route as ShellDashboardRouteImport } from './routes/_shell/dashboard'
+import { Route as ShellSubjectsRouteImport } from './routes/_shell/subjects'
 import { Route as ShellTeachersRouteImport } from './routes/_shell/teachers'
 import { Route as ShellStudentsIndexRouteImport } from './routes/_shell/students/index'
 import { Route as ShellStudentsStudentIdRouteImport } from './routes/_shell/students/$studentId'
@@ -42,6 +43,11 @@ const ShellDashboardRoute = ShellDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => ShellRoute,
 } as any)
+const ShellSubjectsRoute = ShellSubjectsRouteImport.update({
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellTeachersRoute = ShellTeachersRouteImport.update({
   id: '/teachers',
   path: '/teachers',
@@ -63,6 +69,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/classes': typeof ShellClassesRoute
   '/dashboard': typeof ShellDashboardRoute
+  '/subjects': typeof ShellSubjectsRoute
   '/teachers': typeof ShellTeachersRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
   '/students/': typeof ShellStudentsIndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/classes': typeof ShellClassesRoute
   '/dashboard': typeof ShellDashboardRoute
+  '/subjects': typeof ShellSubjectsRoute
   '/teachers': typeof ShellTeachersRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
   '/students': typeof ShellStudentsIndexRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/_shell/classes': typeof ShellClassesRoute
   '/_shell/dashboard': typeof ShellDashboardRoute
+  '/_shell/subjects': typeof ShellSubjectsRoute
   '/_shell/teachers': typeof ShellTeachersRoute
   '/_shell/students/$studentId': typeof ShellStudentsStudentIdRoute
   '/_shell/students/': typeof ShellStudentsIndexRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/classes'
     | '/dashboard'
+    | '/subjects'
     | '/teachers'
     | '/students/$studentId'
     | '/students/'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/classes'
     | '/dashboard'
+    | '/subjects'
     | '/teachers'
     | '/students/$studentId'
     | '/students'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/_shell/classes'
     | '/_shell/dashboard'
+    | '/_shell/subjects'
     | '/_shell/teachers'
     | '/_shell/students/$studentId'
     | '/_shell/students/'
@@ -161,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellDashboardRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/subjects': {
+      id: '/_shell/subjects'
+      path: '/subjects'
+      fullPath: '/subjects'
+      preLoaderRoute: typeof ShellSubjectsRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/teachers': {
       id: '/_shell/teachers'
       path: '/teachers'
@@ -188,6 +207,7 @@ declare module '@tanstack/react-router' {
 interface ShellRouteChildren {
   ShellClassesRoute: typeof ShellClassesRoute
   ShellDashboardRoute: typeof ShellDashboardRoute
+  ShellSubjectsRoute: typeof ShellSubjectsRoute
   ShellTeachersRoute: typeof ShellTeachersRoute
   ShellStudentsStudentIdRoute: typeof ShellStudentsStudentIdRoute
   ShellStudentsIndexRoute: typeof ShellStudentsIndexRoute
@@ -196,6 +216,7 @@ interface ShellRouteChildren {
 const ShellRouteChildren: ShellRouteChildren = {
   ShellClassesRoute: ShellClassesRoute,
   ShellDashboardRoute: ShellDashboardRoute,
+  ShellSubjectsRoute: ShellSubjectsRoute,
   ShellTeachersRoute: ShellTeachersRoute,
   ShellStudentsStudentIdRoute: ShellStudentsStudentIdRoute,
   ShellStudentsIndexRoute: ShellStudentsIndexRoute,
@@ -211,13 +232,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
