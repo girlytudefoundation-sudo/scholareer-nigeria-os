@@ -250,7 +250,7 @@ function ResultsPage() {
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-1">
-                      {has("results.override") &&
+                      {has("results.access") &&
                         (r.blocked ? (
                           <Button
                             size="icon"
