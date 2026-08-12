@@ -16,6 +16,7 @@ import { Route as ShellClassesRouteImport } from './routes/_shell/classes'
 import { Route as ShellDashboardRouteImport } from './routes/_shell/dashboard'
 import { Route as ShellSubjectsRouteImport } from './routes/_shell/subjects'
 import { Route as ShellTeachersRouteImport } from './routes/_shell/teachers'
+import { Route as ShellResultsIndexRouteImport } from './routes/_shell/results/index'
 import { Route as ShellResultsEntryRouteImport } from './routes/_shell/results/entry'
 import { Route as ShellStudentsIndexRouteImport } from './routes/_shell/students/index'
 import { Route as ShellStudentsStudentIdRouteImport } from './routes/_shell/students/$studentId'
@@ -54,6 +55,11 @@ const ShellTeachersRoute = ShellTeachersRouteImport.update({
   path: '/teachers',
   getParentRoute: () => ShellRoute,
 } as any)
+const ShellResultsIndexRoute = ShellResultsIndexRouteImport.update({
+  id: '/results/',
+  path: '/results/',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellResultsEntryRoute = ShellResultsEntryRouteImport.update({
   id: '/results/entry',
   path: '/results/entry',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/teachers': typeof ShellTeachersRoute
   '/results/entry': typeof ShellResultsEntryRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/results/': typeof ShellResultsIndexRoute
   '/students/': typeof ShellStudentsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -90,6 +97,7 @@ export interface FileRoutesByTo {
   '/teachers': typeof ShellTeachersRoute
   '/results/entry': typeof ShellResultsEntryRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/results': typeof ShellResultsIndexRoute
   '/students': typeof ShellStudentsIndexRoute
 }
 export interface FileRoutesById {
@@ -103,6 +111,7 @@ export interface FileRoutesById {
   '/_shell/teachers': typeof ShellTeachersRoute
   '/_shell/results/entry': typeof ShellResultsEntryRoute
   '/_shell/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/_shell/results/': typeof ShellResultsIndexRoute
   '/_shell/students/': typeof ShellStudentsIndexRoute
 }
 export interface FileRouteTypes {
@@ -116,6 +125,7 @@ export interface FileRouteTypes {
     | '/teachers'
     | '/results/entry'
     | '/students/$studentId'
+    | '/results/'
     | '/students/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/teachers'
     | '/results/entry'
     | '/students/$studentId'
+    | '/results'
     | '/students'
   id:
     | '__root__'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/_shell/teachers'
     | '/_shell/results/entry'
     | '/_shell/students/$studentId'
+    | '/_shell/results/'
     | '/_shell/students/'
   fileRoutesById: FileRoutesById
 }
@@ -199,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellTeachersRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/results/': {
+      id: '/_shell/results/'
+      path: '/results'
+      fullPath: '/results/'
+      preLoaderRoute: typeof ShellResultsIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/results/entry': {
       id: '/_shell/results/entry'
       path: '/results/entry'
@@ -230,6 +249,7 @@ interface ShellRouteChildren {
   ShellTeachersRoute: typeof ShellTeachersRoute
   ShellResultsEntryRoute: typeof ShellResultsEntryRoute
   ShellStudentsStudentIdRoute: typeof ShellStudentsStudentIdRoute
+  ShellResultsIndexRoute: typeof ShellResultsIndexRoute
   ShellStudentsIndexRoute: typeof ShellStudentsIndexRoute
 }
 
@@ -240,6 +260,7 @@ const ShellRouteChildren: ShellRouteChildren = {
   ShellTeachersRoute: ShellTeachersRoute,
   ShellResultsEntryRoute: ShellResultsEntryRoute,
   ShellStudentsStudentIdRoute: ShellStudentsStudentIdRoute,
+  ShellResultsIndexRoute: ShellResultsIndexRoute,
   ShellStudentsIndexRoute: ShellStudentsIndexRoute,
 }
 
