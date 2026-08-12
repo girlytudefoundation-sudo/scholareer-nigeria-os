@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ShellRouteImport } from './routes/_shell'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ShellClassesRouteImport } from './routes/_shell/classes'
 import { Route as ShellDashboardRouteImport } from './routes/_shell/dashboard'
 import { Route as ShellTeachersRouteImport } from './routes/_shell/teachers'
 import { Route as ShellStudentsIndexRouteImport } from './routes/_shell/students/index'
@@ -30,6 +31,11 @@ const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ShellClassesRoute = ShellClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => ShellRoute,
 } as any)
 const ShellDashboardRoute = ShellDashboardRouteImport.update({
   id: '/dashboard',
@@ -55,6 +61,7 @@ const ShellStudentsStudentIdRoute = ShellStudentsStudentIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/classes': typeof ShellClassesRoute
   '/dashboard': typeof ShellDashboardRoute
   '/teachers': typeof ShellTeachersRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
@@ -63,6 +70,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/classes': typeof ShellClassesRoute
   '/dashboard': typeof ShellDashboardRoute
   '/teachers': typeof ShellTeachersRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
@@ -73,6 +81,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_shell': typeof ShellRouteWithChildren
   '/login': typeof LoginRoute
+  '/_shell/classes': typeof ShellClassesRoute
   '/_shell/dashboard': typeof ShellDashboardRoute
   '/_shell/teachers': typeof ShellTeachersRoute
   '/_shell/students/$studentId': typeof ShellStudentsStudentIdRoute
@@ -83,6 +92,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/classes'
     | '/dashboard'
     | '/teachers'
     | '/students/$studentId'
@@ -91,6 +101,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/classes'
     | '/dashboard'
     | '/teachers'
     | '/students/$studentId'
@@ -100,6 +111,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_shell'
     | '/login'
+    | '/_shell/classes'
     | '/_shell/dashboard'
     | '/_shell/teachers'
     | '/_shell/students/$studentId'
@@ -135,6 +147,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_shell/classes': {
+      id: '/_shell/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof ShellClassesRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/dashboard': {
       id: '/_shell/dashboard'
       path: '/dashboard'
@@ -167,6 +186,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface ShellRouteChildren {
+  ShellClassesRoute: typeof ShellClassesRoute
   ShellDashboardRoute: typeof ShellDashboardRoute
   ShellTeachersRoute: typeof ShellTeachersRoute
   ShellStudentsStudentIdRoute: typeof ShellStudentsStudentIdRoute
@@ -174,6 +194,7 @@ interface ShellRouteChildren {
 }
 
 const ShellRouteChildren: ShellRouteChildren = {
+  ShellClassesRoute: ShellClassesRoute,
   ShellDashboardRoute: ShellDashboardRoute,
   ShellTeachersRoute: ShellTeachersRoute,
   ShellStudentsStudentIdRoute: ShellStudentsStudentIdRoute,
@@ -190,3 +211,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
