@@ -10,33 +10,167 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ShellRouteImport } from './routes/_shell'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ShellClassesRouteImport } from './routes/_shell/classes'
+import { Route as ShellDashboardRouteImport } from './routes/_shell/dashboard'
+import { Route as ShellSubjectsRouteImport } from './routes/_shell/subjects'
+import { Route as ShellTeachersRouteImport } from './routes/_shell/teachers'
+import { Route as ShellResultsIndexRouteImport } from './routes/_shell/results/index'
+import { Route as ShellResultsEntryRouteImport } from './routes/_shell/results/entry'
+import { Route as ShellStudentsIndexRouteImport } from './routes/_shell/students/index'
+import { Route as ShellStudentsStudentIdRouteImport } from './routes/_shell/students/$studentId'
+import { Route as ShellResultsStudentIdReportRouteImport } from './routes/_shell/results/$studentId/report'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShellRoute = ShellRouteImport.update({
+  id: '/_shell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShellClassesRoute = ShellClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellDashboardRoute = ShellDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellSubjectsRoute = ShellSubjectsRouteImport.update({
+  id: '/subjects',
+  path: '/subjects',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellTeachersRoute = ShellTeachersRouteImport.update({
+  id: '/teachers',
+  path: '/teachers',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellResultsIndexRoute = ShellResultsIndexRouteImport.update({
+  id: '/results/',
+  path: '/results/',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellResultsEntryRoute = ShellResultsEntryRouteImport.update({
+  id: '/results/entry',
+  path: '/results/entry',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellStudentsIndexRoute = ShellStudentsIndexRouteImport.update({
+  id: '/students/',
+  path: '/students/',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellStudentsStudentIdRoute = ShellStudentsStudentIdRouteImport.update({
+  id: '/students/$studentId',
+  path: '/students/$studentId',
+  getParentRoute: () => ShellRoute,
+} as any)
+const ShellResultsStudentIdReportRoute =
+  ShellResultsStudentIdReportRouteImport.update({
+    id: '/results/$studentId/report',
+    path: '/results/$studentId/report',
+    getParentRoute: () => ShellRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/classes': typeof ShellClassesRoute
+  '/dashboard': typeof ShellDashboardRoute
+  '/subjects': typeof ShellSubjectsRoute
+  '/teachers': typeof ShellTeachersRoute
+  '/results/entry': typeof ShellResultsEntryRoute
+  '/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/results/': typeof ShellResultsIndexRoute
+  '/students/': typeof ShellStudentsIndexRoute
+  '/results/$studentId/report': typeof ShellResultsStudentIdReportRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/classes': typeof ShellClassesRoute
+  '/dashboard': typeof ShellDashboardRoute
+  '/subjects': typeof ShellSubjectsRoute
+  '/teachers': typeof ShellTeachersRoute
+  '/results/entry': typeof ShellResultsEntryRoute
+  '/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/results': typeof ShellResultsIndexRoute
+  '/students': typeof ShellStudentsIndexRoute
+  '/results/$studentId/report': typeof ShellResultsStudentIdReportRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_shell': typeof ShellRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_shell/classes': typeof ShellClassesRoute
+  '/_shell/dashboard': typeof ShellDashboardRoute
+  '/_shell/subjects': typeof ShellSubjectsRoute
+  '/_shell/teachers': typeof ShellTeachersRoute
+  '/_shell/results/entry': typeof ShellResultsEntryRoute
+  '/_shell/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/_shell/results/': typeof ShellResultsIndexRoute
+  '/_shell/students/': typeof ShellStudentsIndexRoute
+  '/_shell/results/$studentId/report': typeof ShellResultsStudentIdReportRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/classes'
+    | '/dashboard'
+    | '/subjects'
+    | '/teachers'
+    | '/results/entry'
+    | '/students/$studentId'
+    | '/results/'
+    | '/students/'
+    | '/results/$studentId/report'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/login'
+    | '/classes'
+    | '/dashboard'
+    | '/subjects'
+    | '/teachers'
+    | '/results/entry'
+    | '/students/$studentId'
+    | '/results'
+    | '/students'
+    | '/results/$studentId/report'
+  id:
+    | '__root__'
+    | '/'
+    | '/_shell'
+    | '/login'
+    | '/_shell/classes'
+    | '/_shell/dashboard'
+    | '/_shell/subjects'
+    | '/_shell/teachers'
+    | '/_shell/results/entry'
+    | '/_shell/students/$studentId'
+    | '/_shell/results/'
+    | '/_shell/students/'
+    | '/_shell/results/$studentId/report'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ShellRoute: typeof ShellRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +182,117 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_shell': {
+      id: '/_shell'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof ShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_shell/classes': {
+      id: '/_shell/classes'
+      path: '/classes'
+      fullPath: '/classes'
+      preLoaderRoute: typeof ShellClassesRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/dashboard': {
+      id: '/_shell/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ShellDashboardRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/subjects': {
+      id: '/_shell/subjects'
+      path: '/subjects'
+      fullPath: '/subjects'
+      preLoaderRoute: typeof ShellSubjectsRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/teachers': {
+      id: '/_shell/teachers'
+      path: '/teachers'
+      fullPath: '/teachers'
+      preLoaderRoute: typeof ShellTeachersRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/results/': {
+      id: '/_shell/results/'
+      path: '/results'
+      fullPath: '/results/'
+      preLoaderRoute: typeof ShellResultsIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/results/entry': {
+      id: '/_shell/results/entry'
+      path: '/results/entry'
+      fullPath: '/results/entry'
+      preLoaderRoute: typeof ShellResultsEntryRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/students/': {
+      id: '/_shell/students/'
+      path: '/students'
+      fullPath: '/students/'
+      preLoaderRoute: typeof ShellStudentsIndexRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/students/$studentId': {
+      id: '/_shell/students/$studentId'
+      path: '/students/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof ShellStudentsStudentIdRouteImport
+      parentRoute: typeof ShellRoute
+    }
+    '/_shell/results/$studentId/report': {
+      id: '/_shell/results/$studentId/report'
+      path: '/results/$studentId/report'
+      fullPath: '/results/$studentId/report'
+      preLoaderRoute: typeof ShellResultsStudentIdReportRouteImport
+      parentRoute: typeof ShellRoute
+    }
   }
 }
 
+interface ShellRouteChildren {
+  ShellClassesRoute: typeof ShellClassesRoute
+  ShellDashboardRoute: typeof ShellDashboardRoute
+  ShellSubjectsRoute: typeof ShellSubjectsRoute
+  ShellTeachersRoute: typeof ShellTeachersRoute
+  ShellResultsEntryRoute: typeof ShellResultsEntryRoute
+  ShellStudentsStudentIdRoute: typeof ShellStudentsStudentIdRoute
+  ShellResultsIndexRoute: typeof ShellResultsIndexRoute
+  ShellStudentsIndexRoute: typeof ShellStudentsIndexRoute
+  ShellResultsStudentIdReportRoute: typeof ShellResultsStudentIdReportRoute
+}
+
+const ShellRouteChildren: ShellRouteChildren = {
+  ShellClassesRoute: ShellClassesRoute,
+  ShellDashboardRoute: ShellDashboardRoute,
+  ShellSubjectsRoute: ShellSubjectsRoute,
+  ShellTeachersRoute: ShellTeachersRoute,
+  ShellResultsEntryRoute: ShellResultsEntryRoute,
+  ShellStudentsStudentIdRoute: ShellStudentsStudentIdRoute,
+  ShellResultsIndexRoute: ShellResultsIndexRoute,
+  ShellStudentsIndexRoute: ShellStudentsIndexRoute,
+  ShellResultsStudentIdReportRoute: ShellResultsStudentIdReportRoute,
+}
+
+const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ShellRoute: ShellRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
