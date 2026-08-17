@@ -55,6 +55,14 @@ export const notify = async (orgId: ID, title: string, message: string, type = "
   await getDB().notifications.add(n);
 };
 
+export const orgService = {
+  get: (orgId: ID) => getDB().organizations.get(orgId),
+  list: () => getDB().organizations.toArray(),
+  update: async (orgId: ID, patch: Partial<Organization>) => {
+    await getDB().organizations.update(orgId, patch);
+  },
+};
+
 export const settingsService = {
   get: (orgId: ID) => getDB().settings.get(orgId),
   update: async (orgId: ID, patch: Partial<Settings>) => {
