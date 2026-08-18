@@ -20,6 +20,7 @@ import { Route as ShellFinanceRouteImport } from './routes/_shell/finance'
 import { Route as ShellIdCardsRouteImport } from './routes/_shell/id-cards'
 import { Route as ShellLibraryRouteImport } from './routes/_shell/library'
 import { Route as ShellReportsRouteImport } from './routes/_shell/reports'
+import { Route as ShellSettingsRouteImport } from './routes/_shell/settings'
 import { Route as ShellSubjectsRouteImport } from './routes/_shell/subjects'
 import { Route as ShellTeachersRouteImport } from './routes/_shell/teachers'
 import { Route as ShellTranscriptsRouteImport } from './routes/_shell/transcripts'
@@ -84,6 +85,11 @@ const ShellReportsRoute = ShellReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => ShellRoute,
 } as any)
+const ShellSettingsRoute = ShellSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ShellRoute,
+} as any)
 const ShellSubjectsRoute = ShellSubjectsRouteImport.update({
   id: '/subjects',
   path: '/subjects',
@@ -142,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/id-cards': typeof ShellIdCardsRoute
   '/library': typeof ShellLibraryRoute
   '/reports': typeof ShellReportsRoute
+  '/settings': typeof ShellSettingsRoute
   '/subjects': typeof ShellSubjectsRoute
   '/teachers': typeof ShellTeachersRoute
   '/transcripts': typeof ShellTranscriptsRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/id-cards': typeof ShellIdCardsRoute
   '/library': typeof ShellLibraryRoute
   '/reports': typeof ShellReportsRoute
+  '/settings': typeof ShellSettingsRoute
   '/subjects': typeof ShellSubjectsRoute
   '/teachers': typeof ShellTeachersRoute
   '/transcripts': typeof ShellTranscriptsRoute
@@ -186,6 +194,7 @@ export interface FileRoutesById {
   '/_shell/id-cards': typeof ShellIdCardsRoute
   '/_shell/library': typeof ShellLibraryRoute
   '/_shell/reports': typeof ShellReportsRoute
+  '/_shell/settings': typeof ShellSettingsRoute
   '/_shell/subjects': typeof ShellSubjectsRoute
   '/_shell/teachers': typeof ShellTeachersRoute
   '/_shell/transcripts': typeof ShellTranscriptsRoute
@@ -209,6 +218,7 @@ export interface FileRouteTypes {
     | '/id-cards'
     | '/library'
     | '/reports'
+    | '/settings'
     | '/subjects'
     | '/teachers'
     | '/transcripts'
@@ -230,6 +240,7 @@ export interface FileRouteTypes {
     | '/id-cards'
     | '/library'
     | '/reports'
+    | '/settings'
     | '/subjects'
     | '/teachers'
     | '/transcripts'
@@ -252,6 +263,7 @@ export interface FileRouteTypes {
     | '/_shell/id-cards'
     | '/_shell/library'
     | '/_shell/reports'
+    | '/_shell/settings'
     | '/_shell/subjects'
     | '/_shell/teachers'
     | '/_shell/transcripts'
@@ -348,6 +360,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellReportsRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_shell/settings': {
+      id: '/_shell/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof ShellSettingsRouteImport
+      parentRoute: typeof ShellRoute
+    }
     '/_shell/subjects': {
       id: '/_shell/subjects'
       path: '/subjects'
@@ -423,6 +442,7 @@ interface ShellRouteChildren {
   ShellIdCardsRoute: typeof ShellIdCardsRoute
   ShellLibraryRoute: typeof ShellLibraryRoute
   ShellReportsRoute: typeof ShellReportsRoute
+  ShellSettingsRoute: typeof ShellSettingsRoute
   ShellSubjectsRoute: typeof ShellSubjectsRoute
   ShellTeachersRoute: typeof ShellTeachersRoute
   ShellTranscriptsRoute: typeof ShellTranscriptsRoute
@@ -443,6 +463,7 @@ const ShellRouteChildren: ShellRouteChildren = {
   ShellIdCardsRoute: ShellIdCardsRoute,
   ShellLibraryRoute: ShellLibraryRoute,
   ShellReportsRoute: ShellReportsRoute,
+  ShellSettingsRoute: ShellSettingsRoute,
   ShellSubjectsRoute: ShellSubjectsRoute,
   ShellTeachersRoute: ShellTeachersRoute,
   ShellTranscriptsRoute: ShellTranscriptsRoute,

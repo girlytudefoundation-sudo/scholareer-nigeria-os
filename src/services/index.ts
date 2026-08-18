@@ -6,6 +6,7 @@ import type {
   Borrowing,
   ID,
   Notification,
+  Organization,
   Payment,
   ResultMeta,
   SchoolClass,
