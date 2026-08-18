@@ -35,10 +35,11 @@ export const Route = createFileRoute("/")({
 });
 
 const DEMO_ACCOUNTS = [
-  { role: "Super Admin", email: "superadmin@scholareer.ng", pass: "password" },
-  { role: "Principal", email: "principal@allsaints.ng", pass: "password" },
-  { role: "Bursar", email: "bursar@allsaints.ng", pass: "password" },
-  { role: "Teacher", email: "teacher@allsaints.ng", pass: "password" },
+  { role: "Super Admin", email: "superadmin@scholareer.local", pass: "Admin123!" },
+  { role: "School Admin", email: "admin@asac.local", pass: "Admin123!" },
+  { role: "Principal", email: "principal@asac.local", pass: "Admin123!" },
+  { role: "Cashier", email: "cashier@asac.local", pass: "Admin123!" },
+  { role: "Teacher", email: "teacher@asac.local", pass: "Admin123!" },
 ];
 
 function HomePage() {
