@@ -5,7 +5,9 @@ import {
   ArrowRight,
   CheckCircle2,
   GraduationCap,
+  LayoutDashboard,
   Loader2,
+  LogIn,
   ShieldCheck,
   Wallet,
 } from "lucide-react";
@@ -29,40 +31,21 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
-  component: Onboarding,
+  component: HomePage,
 });
 
-const STEPS = [
-  {
-    title: "Welcome to Scholareer",
-    body: "The School Operating System built for Nigerian schools. Everything you need to run academics, finance and administration in one place — working online and offline.",
-  },
-  {
-    title: "School information",
-    body: "Each school in Scholareer has its own profile: name, code, logo, address, principal, proprietor and motto. Data is isolated per school, so no school ever sees another school's records.",
-  },
-  {
-    title: "Academic session",
-    body: "Set your current session, term and resumption date. Results, fees and attendance are all recorded against the active session and term.",
-  },
-  {
-    title: "Create or select classes",
-    body: "Create classes from Creche and Nursery through Primary, JSS and SSS with arms A, B and C. Each class can carry its own subject structure and result rules.",
-  },
-  {
-    title: "Your dashboard",
-    body: "Live statistics calculated from your own records: enrolment, attendance, fee collection, results pending approval and more.",
-  },
+const DEMO_ACCOUNTS = [
+  { role: "Super Admin", email: "superadmin@scholareer.ng", pass: "password" },
+  { role: "Principal", email: "principal@allsaints.ng", pass: "password" },
+  { role: "Bursar", email: "bursar@allsaints.ng", pass: "password" },
+  { role: "Teacher", email: "teacher@allsaints.ng", pass: "password" },
 ];
 
-function Onboarding() {
+function HomePage() {
   const { user, loading, seeded, loadDemo } = useAuth();
-  const [step, setStep] = useState(0);
   const [busy, setBusy] = useState(false);
 
   if (!loading && user) return <Navigate to="/dashboard" replace />;
-
-  const current = STEPS[step]!;
 
   return (
     <div className="min-h-screen bg-background">
@@ -79,33 +62,32 @@ function Onboarding() {
           </div>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link to="/login">Sign in</Link>
+          <Link to="/login">
+            <LogIn className="mr-1.5 h-4 w-4" /> Sign in
+          </Link>
         </Button>
       </header>
 
-      <main className="mx-auto grid max-w-5xl gap-8 px-5 py-8 lg:grid-cols-[1.1fr_0.9fr] lg:py-16">
-        <section>
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">
-            Step {step + 1} of {STEPS.length}
+      <main className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
+        <section className="text-center">
+          <h1 className="font-display text-3xl font-extrabold tracking-tight sm:text-5xl">
+            The School Operating System
+          </h1>
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            Scholareer helps Nigerian schools manage students, academics, results, finance,
+            attendance, library and more — all in one place. It works offline, keeps every
+            school&apos;s data private, and is ready to use right from this device.
           </p>
-          <h1 className="font-display mt-2 text-3xl font-extrabold sm:text-4xl">{current.title}</h1>
-          <p className="mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">{current.body}</p>
 
-          <div className="mt-6 flex flex-wrap gap-2">
-            <Button variant="outline" disabled={step === 0} onClick={() => setStep((s) => s - 1)}>
-              Back
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild size="lg">
+              <Link to="/login">
+                <LayoutDashboard className="mr-2 h-5 w-5" /> Go to Dashboard
+              </Link>
             </Button>
-            {step < STEPS.length - 1 ? (
-              <Button onClick={() => setStep((s) => s + 1)}>
-                Continue <ArrowRight className="ml-1.5 h-4 w-4" />
-              </Button>
-            ) : (
-              <Button asChild>
-                <Link to="/login">Go to sign in</Link>
-              </Button>
-            )}
             <Button
               variant="secondary"
+              size="lg"
               disabled={busy}
               onClick={async () => {
                 setBusy(true);
@@ -123,23 +105,9 @@ function Onboarding() {
               Load Demo School
             </Button>
           </div>
-
-          <div className="mt-6 flex gap-1.5">
-            {STEPS.map((s, i) => (
-              <button
-                key={s.title}
-                aria-label={`Go to step ${i + 1}`}
-                onClick={() => setStep(i)}
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  i <= step ? "bg-primary" : "bg-muted"
-                }`}
-              />
-            ))}
-          </div>
         </section>
 
-        <section className="surface-card space-y-4 p-6">
-          <h2 className="font-display text-base font-bold">What you get</h2>
+        <section className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             [GraduationCap, "Students, classes, subjects and teachers"],
             [ShieldCheck, "Result engine with approval and access control (RACE)"],
@@ -148,7 +116,7 @@ function Onboarding() {
           ].map(([Icon, label]) => {
             const I = Icon as typeof GraduationCap;
             return (
-              <div key={label as string} className="flex items-start gap-3">
+              <div key={label as string} className="surface-card flex items-start gap-3 p-4">
                 <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
                   <I className="h-4 w-4" />
                 </span>
@@ -156,7 +124,43 @@ function Onboarding() {
               </div>
             );
           })}
-          <p className="rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
+        </section>
+
+        <section className="surface-card mx-auto mt-12 max-w-2xl p-6">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-lg font-bold">Try the demo</h2>
+            <Button asChild variant="ghost" size="sm">
+              <Link to="/login">
+                Sign in <ArrowRight className="ml-1 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Load the demo school, then sign in with any of these accounts to explore Scholareer.
+          </p>
+
+          <div className="mt-5 overflow-hidden rounded-xl border">
+            <table className="w-full text-sm">
+              <thead className="bg-muted/70 text-left text-xs uppercase tracking-wider text-muted-foreground">
+                <tr>
+                  <th className="px-4 py-2.5 font-medium">Role</th>
+                  <th className="px-4 py-2.5 font-medium">Email</th>
+                  <th className="px-4 py-2.5 font-medium">Password</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y">
+                {DEMO_ACCOUNTS.map((account) => (
+                  <tr key={account.email} className="hover:bg-muted/40">
+                    <td className="px-4 py-2.5 font-medium">{account.role}</td>
+                    <td className="px-4 py-2.5 text-muted-foreground">{account.email}</td>
+                    <td className="px-4 py-2.5 font-mono text-muted-foreground">{account.pass}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="mt-4 rounded-lg bg-muted/60 p-3 text-xs text-muted-foreground">
             All data is stored securely on this device and remains available offline.
           </p>
         </section>
