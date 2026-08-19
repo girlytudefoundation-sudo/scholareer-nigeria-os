@@ -28,7 +28,9 @@ export function StatCard({
           <p className="truncate text-xs font-medium uppercase tracking-wide text-muted-foreground">
             {label}
           </p>
-          <p className="font-display mt-1.5 truncate text-2xl font-extrabold">{value}</p>
+          <p className="font-display mt-1.5 text-xl font-extrabold break-words sm:text-2xl">
+            {value}
+          </p>
           {hint && <p className="mt-1 truncate text-xs text-muted-foreground">{hint}</p>}
         </div>
         {Icon && (
