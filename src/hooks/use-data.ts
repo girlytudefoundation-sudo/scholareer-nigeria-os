@@ -86,6 +86,7 @@ export const fallbackSettings = (orgId: string): Settings => ({
   passMark: 40,
   caMaximum: 30,
   examMaximum: 70,
+  assessment: DEFAULT_ASSESSMENT,
   positionMethod: "COMPETITION",
   blockResultOnDebt: false,
   modules: DEFAULT_MODULES,
