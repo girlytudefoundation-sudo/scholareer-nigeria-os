@@ -71,6 +71,13 @@ export type ModuleKey =
   | "idcards"
   | "reports";
 
+/** Per-school assessment structure. ca1Max + ca2Max + examMax must equal 100. */
+export interface AssessmentConfig {
+  ca1Max: number;
+  ca2Max: number;
+  examMax: number;
+}
+
 export interface Settings {
   id: ID; // = organizationId
   organizationId: ID;
@@ -78,6 +85,7 @@ export interface Settings {
   passMark: number;
   caMaximum: number;
   examMaximum: number;
+  assessment: AssessmentConfig;
   positionMethod: "COMPETITION" | "DENSE";
   blockResultOnDebt: boolean;
   modules: Record<ModuleKey, boolean>;
@@ -196,6 +204,10 @@ export interface ResultMeta {
   teacherComment?: string | undefined;
   principalComment?: string | undefined;
   traits: Record<string, number>;
+  /** Affective domain ratings keyed by trait name. */
+  affective?: Record<string, number> | undefined;
+  /** Psychomotor domain ratings keyed by trait name. */
+  psychomotor?: Record<string, number> | undefined;
   updatedAt: string;
 }
 

@@ -1,6 +1,7 @@
 import { getDB, uid } from "@/db";
 import {
   AFFECTIVE_TRAITS,
+  DEFAULT_ASSESSMENT,
   DEFAULT_GRADING,
   DEFAULT_MODULES,
   DEFAULT_RATING_SCALE,
@@ -89,6 +90,7 @@ export async function seedDemoSchool() {
     passMark: 40,
     caMaximum: 30,
     examMaximum: 70,
+    assessment: DEFAULT_ASSESSMENT,
     positionMethod: "COMPETITION",
     blockResultOnDebt: false,
     modules: DEFAULT_MODULES,
@@ -261,10 +263,10 @@ export async function seedDemoSchool() {
         subjectId: sub.id,
         session: SESSION,
         term: TERM,
-        ca1: Math.min(10, Math.round(base * 0.1)),
-        ca2: Math.min(10, Math.round(base * 0.11)),
-        ca3: Math.min(10, Math.round(base * 0.09)),
-        exam: Math.min(70, Math.round(base * 0.7)),
+        ca1: Math.min(DEFAULT_ASSESSMENT.ca1Max, Math.round(base * 0.15)),
+        ca2: Math.min(DEFAULT_ASSESSMENT.ca2Max, Math.round(base * 0.14)),
+        ca3: 0,
+        exam: Math.min(DEFAULT_ASSESSMENT.examMax, Math.round(base * 0.7)),
         status: si < 3 ? "SUBMITTED" : "DRAFT",
         enteredBy: "Chidi Balogun",
         updatedAt: new Date().toISOString(),
@@ -286,6 +288,8 @@ export async function seedDemoSchool() {
     teacherComment: "A promising student who can do even better.",
     principalComment: "Keep up the good work.",
     traits: Object.fromEntries(traits.map((t) => [t.id, 3 + (i % 3)])),
+    affective: Object.fromEntries(AFFECTIVE_TRAITS.map((t, k) => [t, 3 + ((i + k) % 3)])),
+    psychomotor: Object.fromEntries(PSYCHOMOTOR_TRAITS.map((t, k) => [t, 3 + ((i + k) % 3)])),
     updatedAt: new Date().toISOString(),
   }));
 

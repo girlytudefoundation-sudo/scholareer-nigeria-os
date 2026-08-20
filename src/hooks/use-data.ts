@@ -1,7 +1,12 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { getDB } from "@/db";
 import { useOrgId } from "@/lib/auth";
-import { DEFAULT_GRADING, DEFAULT_MODULES, DEFAULT_RATING_SCALE } from "@/lib/constants";
+import {
+  DEFAULT_ASSESSMENT,
+  DEFAULT_GRADING,
+  DEFAULT_MODULES,
+  DEFAULT_RATING_SCALE,
+} from "@/lib/constants";
 import type { Settings } from "@/db/types";
 
 export function useOrgData() {
@@ -81,6 +86,7 @@ export const fallbackSettings = (orgId: string): Settings => ({
   passMark: 40,
   caMaximum: 30,
   examMaximum: 70,
+  assessment: DEFAULT_ASSESSMENT,
   positionMethod: "COMPETITION",
   blockResultOnDebt: false,
   modules: DEFAULT_MODULES,
