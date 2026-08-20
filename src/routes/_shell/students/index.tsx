@@ -1,20 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Download, Plus, Search, Trash2, Upload, Users } from "lucide-react";
+import { Download, Eye, Pencil, Plus, Search, Trash2, Upload, Users } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -34,6 +25,8 @@ import { useOrgData } from "@/hooks/use-data";
 import { useAuth } from "@/lib/auth";
 import { studentService, audit } from "@/services";
 import { downloadCSV, parseCSV, toCSV } from "@/lib/csv";
+import { StudentAvatar } from "@/components/students/student-avatar";
+import { StudentFormDialog, type StudentDraft } from "@/components/students/student-form-dialog";
 import type { Student, StudentStatus } from "@/db/types";
 
 export const Route = createFileRoute("/_shell/students/")({
@@ -50,29 +43,15 @@ export const Route = createFileRoute("/_shell/students/")({
 
 const STATUSES: StudentStatus[] = ["ACTIVE", "GRADUATED", "TRANSFERRED", "WITHDRAWN"];
 
-const emptyForm = {
-  admissionNumber: "",
-  firstName: "",
-  middleName: "",
-  lastName: "",
-  gender: "MALE",
-  dateOfBirth: "",
-  parentName: "",
-  parentPhone: "",
-  address: "",
-  classId: "",
-  arm: "A",
-  status: "ACTIVE",
-};
-
 function StudentsPage() {
   const { data, orgId, loading } = useOrgData();
   const { user, has } = useAuth();
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [classFilter, setClassFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ ...emptyForm });
+  const [editing, setEditing] = useState<Student | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const classes = data?.classes ?? [];
@@ -95,27 +74,20 @@ function StudentsPage() {
 
   const className = (id: string) => classes.find((c) => c.id === id)?.name ?? "—";
 
-  async function handleCreate() {
+  async function handleSubmit(draft: StudentDraft) {
     if (!orgId) return;
-    if (!form.firstName.trim() || !form.lastName.trim() || !form.classId) {
-      toast.error("First name, last name and class are required.");
+    if (editing) {
+      await studentService.update(editing.id, draft);
+      await audit(orgId, user?.name ?? "System", "UPDATE", "Student", editing.admissionNumber);
+      toast.success("Student record updated");
       return;
     }
     const admissionNumber =
-      form.admissionNumber.trim() ||
+      draft.admissionNumber.trim() ||
       `ADM/${new Date().getFullYear()}/${String(students.length + 1).padStart(3, "0")}`;
-    await studentService.create({
-      ...form,
-      admissionNumber,
-      gender: form.gender as Student["gender"],
-      status: form.status as StudentStatus,
-      admissionDate: new Date().toISOString().slice(0, 10),
-      organizationId: orgId,
-    } as Omit<Student, "id">);
+    await studentService.create({ ...draft, admissionNumber, organizationId: orgId });
     await audit(orgId, user?.name ?? "System", "CREATE", "Student", admissionNumber);
     toast.success("Student admitted successfully");
-    setForm({ ...emptyForm });
-    setOpen(false);
   }
 
   function exportCSV() {
@@ -129,6 +101,8 @@ function StudentsPage() {
         dateOfBirth: s.dateOfBirth,
         class: className(s.classId),
         arm: s.arm,
+        house: s.house ?? "",
+        admissionDate: s.admissionDate,
         parentName: s.parentName,
         parentPhone: s.parentPhone,
         status: s.status,
@@ -157,9 +131,10 @@ function StudentsPage() {
         dateOfBirth: r["dateOfBirth"] ?? "",
         parentName: r["parentName"] ?? "",
         parentPhone: r["parentPhone"] ?? "",
+        house: r["house"],
         classId: cls.id,
         arm: r["arm"] || cls.arm,
-        admissionDate: new Date().toISOString().slice(0, 10),
+        admissionDate: r["admissionDate"] || new Date().toISOString().slice(0, 10),
         status: "ACTIVE",
         organizationId: orgId,
       } as Omit<Student, "id">);
@@ -195,119 +170,27 @@ function StudentsPage() {
                     e.target.value = "";
                   }}
                 />
-                <Dialog open={open} onOpenChange={setOpen}>
-                  <DialogTrigger asChild>
-                    <Button size="sm">
-                      <Plus className="mr-1.5 h-4 w-4" /> New student
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
-                    <DialogHeader>
-                      <DialogTitle>Admit a student</DialogTitle>
-                    </DialogHeader>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <Field label="First name">
-                        <Input
-                          value={form.firstName}
-                          onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Last name">
-                        <Input
-                          value={form.lastName}
-                          onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Middle name">
-                        <Input
-                          value={form.middleName}
-                          onChange={(e) => setForm({ ...form, middleName: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Admission number">
-                        <Input
-                          placeholder="Auto-generated"
-                          value={form.admissionNumber}
-                          onChange={(e) => setForm({ ...form, admissionNumber: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Gender">
-                        <Select
-                          value={form.gender}
-                          onValueChange={(v) => setForm({ ...form, gender: v })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="MALE">Male</SelectItem>
-                            <SelectItem value="FEMALE">Female</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </Field>
-                      <Field label="Date of birth">
-                        <Input
-                          type="date"
-                          value={form.dateOfBirth}
-                          onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Class">
-                        <Select
-                          value={form.classId}
-                          onValueChange={(v) => {
-                            const c = classes.find((x) => x.id === v);
-                            setForm({ ...form, classId: v, arm: c?.arm ?? "A" });
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select class" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {classes.map((c) => (
-                              <SelectItem key={c.id} value={c.id}>
-                                {c.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </Field>
-                      <Field label="Arm">
-                        <Input
-                          value={form.arm}
-                          onChange={(e) => setForm({ ...form, arm: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Parent / guardian">
-                        <Input
-                          value={form.parentName}
-                          onChange={(e) => setForm({ ...form, parentName: e.target.value })}
-                        />
-                      </Field>
-                      <Field label="Parent phone">
-                        <Input
-                          value={form.parentPhone}
-                          onChange={(e) => setForm({ ...form, parentPhone: e.target.value })}
-                        />
-                      </Field>
-                      <div className="sm:col-span-2">
-                        <Field label="Home address">
-                          <Input
-                            value={form.address}
-                            onChange={(e) => setForm({ ...form, address: e.target.value })}
-                          />
-                        </Field>
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button onClick={handleCreate}>Save student</Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setEditing(null);
+                    setOpen(true);
+                  }}
+                >
+                  <Plus className="mr-1.5 h-4 w-4" /> New student
+                </Button>
               </>
             )}
           </>
         }
+      />
+
+      <StudentFormDialog
+        open={open}
+        onOpenChange={setOpen}
+        classes={classes}
+        initial={editing}
+        onSubmit={handleSubmit}
       />
 
       <div className="surface-card mb-4 grid gap-3 p-4 sm:grid-cols-[1fr_auto_auto]">
@@ -358,6 +241,7 @@ function StudentsPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">Photo</TableHead>
                 <TableHead>Admission No.</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Class</TableHead>
@@ -370,6 +254,14 @@ function StudentsPage() {
             <TableBody>
               {rows.map((s) => (
                 <TableRow key={s.id}>
+                  <TableCell>
+                    <StudentAvatar
+                      passport={s.passport}
+                      firstName={s.firstName}
+                      lastName={s.lastName}
+                      className="h-9 w-9 text-sm"
+                    />
+                  </TableCell>
                   <TableCell className="font-mono text-xs">{s.admissionNumber}</TableCell>
                   <TableCell className="font-medium">
                     <Link
@@ -380,7 +272,9 @@ function StudentsPage() {
                       {s.lastName}, {s.firstName} {s.middleName ?? ""}
                     </Link>
                   </TableCell>
-                  <TableCell>{className(s.classId)}</TableCell>
+                  <TableCell>
+                    {className(s.classId)} {s.arm ? `· ${s.arm}` : ""}
+                  </TableCell>
                   <TableCell>{s.gender === "MALE" ? "Male" : "Female"}</TableCell>
                   <TableCell className="max-w-40 truncate">{s.parentName}</TableCell>
                   <TableCell>
@@ -389,28 +283,53 @@ function StudentsPage() {
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    {has("students.manage") && (
+                    <div className="flex justify-end gap-0.5">
                       <Button
                         size="icon"
                         variant="ghost"
-                        aria-label={`Remove ${s.firstName}`}
-                        onClick={async () => {
-                          if (!confirm(`Remove ${s.firstName} ${s.lastName}?`)) return;
-                          await studentService.remove(s.id);
-                          if (orgId)
-                            await audit(
-                              orgId,
-                              user?.name ?? "System",
-                              "DELETE",
-                              "Student",
-                              s.admissionNumber,
-                            );
-                          toast.success("Student removed");
-                        }}
+                        aria-label={`View ${s.firstName}`}
+                        onClick={() =>
+                          navigate({ to: "/students/$studentId", params: { studentId: s.id } })
+                        }
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Eye className="h-4 w-4" />
                       </Button>
-                    )}
+                      {has("students.manage") && (
+                        <>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label={`Edit ${s.firstName}`}
+                            onClick={() => {
+                              setEditing(s);
+                              setOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label={`Remove ${s.firstName}`}
+                            onClick={async () => {
+                              if (!confirm(`Remove ${s.firstName} ${s.lastName}?`)) return;
+                              await studentService.remove(s.id);
+                              if (orgId)
+                                await audit(
+                                  orgId,
+                                  user?.name ?? "System",
+                                  "DELETE",
+                                  "Student",
+                                  s.admissionNumber,
+                                );
+                              toast.success("Student removed");
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -424,15 +343,6 @@ function StudentsPage() {
           <Users className="h-4 w-4" /> Load the demo school from Settings to explore sample data.
         </div>
       )}
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="space-y-1.5">
-      <Label className="text-xs">{label}</Label>
-      {children}
     </div>
   );
 }
