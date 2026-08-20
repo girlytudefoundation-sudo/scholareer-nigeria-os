@@ -1,6 +1,7 @@
 import { getDB, uid } from "@/db";
 import {
   AFFECTIVE_TRAITS,
+  DEFAULT_ASSESSMENT,
   DEFAULT_GRADING,
   DEFAULT_MODULES,
   DEFAULT_RATING_SCALE,
