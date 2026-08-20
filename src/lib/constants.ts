@@ -1,4 +1,4 @@
-import type { GradeBand, ModuleKey, Role } from "@/db/types";
+import type { AssessmentConfig, GradeBand, ModuleKey, Role } from "@/db/types";
 
 export const DEFAULT_GRADING: GradeBand[] = [
   { grade: "A", min: 70, max: 100, remark: "Excellent" },
@@ -8,6 +8,9 @@ export const DEFAULT_GRADING: GradeBand[] = [
   { grade: "E", min: 40, max: 44, remark: "Weak Pass" },
   { grade: "F", min: 0, max: 39, remark: "Fail" },
 ];
+
+/** CA1 + CA2 + Examination always sums to 100. */
+export const DEFAULT_ASSESSMENT: AssessmentConfig = { ca1Max: 15, ca2Max: 15, examMax: 70 };
 
 export const DEFAULT_RATING_SCALE = [
   { value: 5, label: "Excellent" },
