@@ -209,10 +209,9 @@ function ScoreEntryPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="min-w-44">Student</TableHead>
-                <TableHead>CA1</TableHead>
-                <TableHead>CA2</TableHead>
-                <TableHead>CA3</TableHead>
-                <TableHead>Exam</TableHead>
+                <TableHead>CA1 /{assessment.ca1Max}</TableHead>
+                <TableHead>CA2 /{assessment.ca2Max}</TableHead>
+                <TableHead>Exam /{assessment.examMax}</TableHead>
                 <TableHead>Total</TableHead>
                 <TableHead>Grade</TableHead>
                 <TableHead>Status</TableHead>
@@ -225,19 +224,19 @@ function ScoreEntryPage() {
                 return (
                   <TableRow key={r.studentId}>
                     <TableCell className="font-medium">{r.name}</TableCell>
-                    {(["ca1", "ca2", "ca3"] as const).map((f) => (
+                    {(["ca1", "ca2"] as const).map((f) => (
                       <TableCell key={f}>
                         <Input
                           className="h-8 w-16"
                           type="number"
                           min={0}
-                          max={caMax}
+                          max={maxOf[f]}
                           value={r[f]}
                           onChange={(e) =>
                             setCell(
                               r.studentId,
                               f,
-                              Math.max(0, Math.min(caMax, Number(e.target.value) || 0)),
+                              Math.max(0, Math.min(maxOf[f], Number(e.target.value) || 0)),
                             )
                           }
                         />
