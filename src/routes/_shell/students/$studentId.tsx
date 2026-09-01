@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
-import { ArrowLeft } from "lucide-react";
-import { PageHeader } from "@/components/common/page-header";
+import { useMemo, useState } from "react";
+import { ArrowLeft, FileText, Pencil } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +14,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useOrgData } from "@/hooks/use-data";
-import { balanceFor } from "@/services";
+import { audit, balanceFor, studentService } from "@/services";
+import { useAuth } from "@/lib/auth";
+import { StudentAvatar } from "@/components/students/student-avatar";
+import { StudentFormDialog } from "@/components/students/student-form-dialog";
 import { naira } from "@/lib/constants";
 import { computeClassResults, ordinal } from "@/lib/result-engine";
 
@@ -32,7 +35,9 @@ export const Route = createFileRoute("/_shell/students/$studentId")({
 
 function StudentProfile() {
   const { studentId } = Route.useParams();
-  const { data } = useOrgData();
+  const { data, orgId } = useOrgData();
+  const { user, has } = useAuth();
+  const [editOpen, setEditOpen] = useState(false);
 
   const view = useMemo(() => {
     if (!data?.organization) return null;
