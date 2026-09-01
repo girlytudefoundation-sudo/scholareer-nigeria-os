@@ -183,8 +183,68 @@
   background-image: linear-gradient(135deg, var(--color-primary), oklch(0.62 0.13 240));
 }
 
+/* ---------------- Report card (A4) ---------------- */
+.rc-sheet {
+  width: 210mm;
+  min-height: 296mm;
+  padding: 8mm;
+  margin: 0 auto;
+  background: #fff;
+  color: #111;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 9pt;
+  line-height: 1.25;
+}
+.rc-sheet table { width: 100%; border-collapse: collapse; }
+.rc-sheet td, .rc-sheet th { border: 0.6pt solid #333; padding: 3pt 5pt; vertical-align: middle; }
+.rc-sheet th { background: #eceff3; font-size: 7.5pt; text-transform: uppercase; letter-spacing: 0.02em; text-align: center; }
+.rc-label { background: #eceff3; font-size: 7.5pt; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.rc-section-title {
+  margin: 5pt 0 2pt;
+  font-size: 8pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1pt solid #333;
+  padding-bottom: 1pt;
+}
+.rc-head-name { font-size: 17pt; font-weight: 800; letter-spacing: 0.01em; margin: 0; text-transform: uppercase; }
+.rc-motto { font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.08em; margin: 1pt 0; }
+.rc-meta { font-size: 8pt; margin: 1pt 0; }
+.rc-title { font-size: 9pt; font-weight: 700; text-transform: uppercase; margin-top: 3pt; }
+.rc-photo { width: 26mm; height: 32mm; object-fit: cover; border: 0.6pt solid #333; background: #f4f4f4; }
+.rc-logo { width: 22mm; height: 22mm; object-fit: contain; }
+.rc-center { text-align: center; }
+.rc-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.rc-comment-box { height: 16mm; font-size: 8.5pt; }
+.rc-sign-box { height: 12mm; }
+.rc-footer { margin-top: 4pt; text-align: center; font-size: 7.5pt; }
+.rc-scroll { overflow-x: auto; }
+.rc-sheet table, .rc-sheet tr, .rc-sheet td, .rc-sheet section { break-inside: avoid; page-break-inside: avoid; }
+
+@media (max-width: 820px) {
+  .rc-sheet { transform-origin: top left; }
+}
+
 @media print {
-  .no-print { display: none !important; }
+  .no-print, .print\:hidden { display: none !important; }
   .print-sheet { box-shadow: none !important; border: none !important; }
   body { background: #fff !important; }
+
+  @page { size: A4 portrait; margin: 6mm; }
+  html, body { width: 210mm; background: #fff !important; }
+  body.printing-report * { visibility: hidden !important; }
+  body.printing-report #report-card,
+  body.printing-report #report-card * { visibility: visible !important; }
+  body.printing-report #report-card {
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    width: 198mm;
+    min-height: auto;
+    padding: 0;
+    margin: 0;
+    box-shadow: none !important;
+  }
+  .rc-sheet { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
