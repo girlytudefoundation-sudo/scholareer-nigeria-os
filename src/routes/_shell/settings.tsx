@@ -187,21 +187,67 @@ function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="academics" className="mt-4 space-y-4">
+          <div className="surface-card p-5">
+            <p className="text-sm font-semibold">Assessment structure</p>
+            <p className="mb-3 text-xs text-muted-foreground">
+              CA 1 + CA 2 + Examination must total exactly 100. This drives score entry, totals and
+              the report card.
+            </p>
+            <div className="grid gap-3 sm:grid-cols-4">
+              <F label="CA 1 maximum">
+                <Input
+                  type="number"
+                  min={0}
+                  value={assessment.ca1Max}
+                  onChange={(e) =>
+                    setAssessment({ ...assessment, ca1Max: Number(e.target.value) || 0 })
+                  }
+                />
+              </F>
+              <F label="CA 2 maximum">
+                <Input
+                  type="number"
+                  min={0}
+                  value={assessment.ca2Max}
+                  onChange={(e) =>
+                    setAssessment({ ...assessment, ca2Max: Number(e.target.value) || 0 })
+                  }
+                />
+              </F>
+              <F label="Examination maximum">
+                <Input
+                  type="number"
+                  min={0}
+                  value={assessment.examMax}
+                  onChange={(e) =>
+                    setAssessment({ ...assessment, examMax: Number(e.target.value) || 0 })
+                  }
+                />
+              </F>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Total</Label>
+                <div
+                  className={`flex h-9 items-center rounded-md border px-3 text-sm font-semibold ${
+                    assessmentTotal === 100 ? "text-success" : "text-destructive"
+                  }`}
+                >
+                  {assessmentTotal} / 100
+                </div>
+              </div>
+            </div>
+            {assessmentTotal !== 100 && (
+              <p className="mt-2 text-xs font-medium text-destructive">
+                The components must add up to 100 before this can be saved.
+              </p>
+            )}
+            {canManage && (
+              <Button className="mt-3" onClick={saveAssessment} disabled={assessmentTotal !== 100}>
+                <Save className="mr-1.5 h-4 w-4" /> Save assessment structure
+              </Button>
+            )}
+          </div>
+
           <div className="surface-card grid gap-3 p-5 sm:grid-cols-3">
-            <F label="CA maximum">
-              <Input
-                type="number"
-                value={settings.caMaximum}
-                onChange={(e) => setSettings({ ...settings, caMaximum: Number(e.target.value) })}
-              />
-            </F>
-            <F label="Exam maximum">
-              <Input
-                type="number"
-                value={settings.examMaximum}
-                onChange={(e) => setSettings({ ...settings, examMaximum: Number(e.target.value) })}
-              />
-            </F>
             <F label="Pass mark">
               <Input
                 type="number"
