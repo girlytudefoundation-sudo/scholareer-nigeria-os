@@ -26,6 +26,7 @@ import { useOrgData } from "@/hooks/use-data";
 import { useAuth } from "@/lib/auth";
 import { audit, scoreService } from "@/services";
 import { gradeFor } from "@/lib/result-engine";
+import { DEFAULT_ASSESSMENT } from "@/lib/constants";
 import type { ScoreRecord, ScoreStatus } from "@/db/types";
 
 export const Route = createFileRoute("/_shell/results/entry")({
