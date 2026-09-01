@@ -26,8 +26,14 @@ import {
 import { useOrgData, fallbackSettings } from "@/hooks/use-data";
 import { useAuth } from "@/lib/auth";
 import { audit, orgService, settingsService } from "@/services";
-import { TERMS } from "@/lib/constants";
-import type { GradeBand, ModuleKey, Organization, Settings } from "@/db/types";
+import { DEFAULT_ASSESSMENT, TERMS } from "@/lib/constants";
+import type {
+  AssessmentConfig,
+  GradeBand,
+  ModuleKey,
+  Organization,
+  Settings,
+} from "@/db/types";
 
 export const Route = createFileRoute("/_shell/settings")({
   head: () => ({
