@@ -106,11 +106,66 @@ function StudentProfile() {
           <ArrowLeft className="mr-1.5 h-4 w-4" /> All students
         </Link>
       </Button>
-      <PageHeader
-        title={`${s.firstName} ${s.middleName ?? ""} ${s.lastName}`.replace(/\s+/g, " ")}
-        description={`${s.admissionNumber} · ${view.cls?.name ?? "Unassigned"}`}
-        actions={<Badge variant="secondary">{s.status}</Badge>}
+
+      <StudentFormDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        classes={data?.classes ?? []}
+        initial={s}
+        onSubmit={async (draft) => {
+          await studentService.update(s.id, draft);
+          if (orgId)
+            await audit(orgId, user?.name ?? "System", "UPDATE", "Student", s.admissionNumber);
+          toast.success("Student record updated");
+        }}
       />
+
+      <div className="surface-card mb-5 flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:p-5">
+        <StudentAvatar
+          passport={s.passport}
+          firstName={s.firstName}
+          lastName={s.lastName}
+          className="h-28 w-24 self-center text-3xl sm:self-auto"
+        />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="font-display truncate text-xl font-extrabold sm:text-2xl">
+              {`${s.firstName} ${s.middleName ?? ""} ${s.lastName}`.replace(/\s+/g, " ")}
+            </h1>
+            <Badge variant={s.status === "ACTIVE" ? "secondary" : "outline"}>{s.status}</Badge>
+          </div>
+          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3 lg:grid-cols-4">
+            {[
+              ["Admission no.", s.admissionNumber],
+              ["Class", view.cls?.name ?? "—"],
+              ["Arm", s.arm || "—"],
+              ["Gender", s.gender === "MALE" ? "Male" : "Female"],
+              ["Date of birth", s.dateOfBirth || "—"],
+              ["House", s.house || "—"],
+              ["Parent / guardian", s.parentName || "—"],
+              ["Contact", s.parentPhone || "—"],
+            ].map(([k, v]) => (
+              <div key={k as string} className="min-w-0">
+                <dt className="text-[11px] uppercase tracking-wide text-muted-foreground">{k}</dt>
+                <dd className="truncate font-medium">{v}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+        <div className="flex gap-2 sm:flex-col">
+          {has("students.manage") && (
+            <Button size="sm" variant="outline" onClick={() => setEditOpen(true)}>
+              <Pencil className="mr-1.5 h-4 w-4" /> Edit
+            </Button>
+          )}
+          <Button asChild size="sm">
+            <Link to="/results/$studentId/report" params={{ studentId: s.id }}>
+              <FileText className="mr-1.5 h-4 w-4" /> Report card
+            </Link>
+          </Button>
+        </div>
+      </div>
+
 
       <Tabs defaultValue="bio">
         <TabsList className="mb-4 flex-wrap">
