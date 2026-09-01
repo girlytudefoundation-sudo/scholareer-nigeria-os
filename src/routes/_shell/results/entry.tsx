@@ -106,8 +106,9 @@ function ScoreEntryPage() {
   }, [org, classId, subjectId, data]);
 
   const subject = subjects.find((s) => s.id === subjectId);
-  const caMax = subject?.caMaximum ?? 30;
-  const examMax = subject?.examMaximum ?? 70;
+  const assessment = data?.settings?.assessment ?? DEFAULT_ASSESSMENT;
+  const maxOf = { ca1: assessment.ca1Max, ca2: assessment.ca2Max } as const;
+  const examMax = assessment.examMax;
 
   function setCell(studentId: string, field: keyof Row, value: number) {
     setRows((prev) =>
