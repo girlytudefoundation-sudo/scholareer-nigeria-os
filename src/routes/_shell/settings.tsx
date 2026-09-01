@@ -97,6 +97,32 @@ function SettingsPage() {
     toast.success("Settings saved");
   }
 
+  const assessment = settings.assessment ?? DEFAULT_ASSESSMENT;
+  const assessmentTotal = assessment.ca1Max + assessment.ca2Max + assessment.examMax;
+
+  function setAssessment(next: AssessmentConfig) {
+    setSettings((s) => (s ? { ...s, assessment: next } : s));
+  }
+
+  async function saveAssessment() {
+    if (!orgId) return;
+    if (assessmentTotal !== 100) {
+      toast.error("CA 1 + CA 2 + Examination must equal 100.");
+      return;
+    }
+    const next = { ...settings, assessment } as Settings;
+    await settingsService.update(orgId, next);
+    await audit(
+      orgId,
+      user?.name ?? "System",
+      "UPDATE",
+      "Settings",
+      orgId,
+      `Assessment ${assessment.ca1Max}/${assessment.ca2Max}/${assessment.examMax}`,
+    );
+    toast.success("Assessment structure saved");
+  }
+
   function updateBand(index: number, patch: Partial<GradeBand>) {
     setSettings((s) =>
       s ? { ...s, grading: s.grading.map((g, i) => (i === index ? { ...g, ...patch } : g)) } : s,
