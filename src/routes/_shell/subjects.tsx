@@ -59,13 +59,13 @@ function SubjectsPage() {
   const subjects = data?.subjects ?? [];
   const classes = data?.classes ?? [];
 
-  async function create() {
+  async function save() {
     if (!orgId) return;
     if (!form.subjectName.trim()) {
       toast.error("Subject name is required.");
       return;
     }
-    await subjectService.create({
+    const payload = {
       subjectName: form.subjectName.trim(),
       subjectCode:
         form.subjectCode.trim() || form.subjectName.trim().slice(0, 3).toUpperCase(),
@@ -77,11 +77,19 @@ function SubjectsPage() {
       gradingScheme: "default",
       classIds: form.classIds,
       organizationId: orgId,
-    });
-    toast.success("Subject created");
+    };
+    if (editingId) {
+      await subjectService.update(editingId, payload);
+      toast.success("Subject updated");
+    } else {
+      await subjectService.create(payload);
+      toast.success("Subject created");
+    }
     setForm({ ...empty });
+    setEditingId(null);
     setOpen(false);
   }
+
 
   return (
     <div>
