@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,17 +55,18 @@ function SubjectsPage() {
   const { has } = useAuth();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ ...empty });
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const subjects = data?.subjects ?? [];
   const classes = data?.classes ?? [];
 
-  async function create() {
+  async function save() {
     if (!orgId) return;
     if (!form.subjectName.trim()) {
       toast.error("Subject name is required.");
       return;
     }
-    await subjectService.create({
+    const payload = {
       subjectName: form.subjectName.trim(),
       subjectCode:
         form.subjectCode.trim() || form.subjectName.trim().slice(0, 3).toUpperCase(),
@@ -77,11 +78,19 @@ function SubjectsPage() {
       gradingScheme: "default",
       classIds: form.classIds,
       organizationId: orgId,
-    });
-    toast.success("Subject created");
+    };
+    if (editingId) {
+      await subjectService.update(editingId, payload);
+      toast.success("Subject updated");
+    } else {
+      await subjectService.create(payload);
+      toast.success("Subject created");
+    }
     setForm({ ...empty });
+    setEditingId(null);
     setOpen(false);
   }
+
 
   return (
     <div>
@@ -90,7 +99,16 @@ function SubjectsPage() {
         description={`${subjects.length} subjects in the catalogue`}
         actions={
           has("subjects.manage") && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog
+              open={open}
+              onOpenChange={(v) => {
+                setOpen(v);
+                if (!v) {
+                  setEditingId(null);
+                  setForm({ ...empty });
+                }
+              }}
+            >
               <DialogTrigger asChild>
                 <Button size="sm">
                   <Plus className="mr-1.5 h-4 w-4" /> New subject
@@ -98,7 +116,7 @@ function SubjectsPage() {
               </DialogTrigger>
               <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>Create a subject</DialogTitle>
+                  <DialogTitle>{editingId ? "Edit subject" : "Create a subject"}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div className="space-y-1.5 sm:col-span-2">
@@ -164,7 +182,7 @@ function SubjectsPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={create}>Create subject</Button>
+                  <Button onClick={save}>{editingId ? "Save changes" : "Create subject"}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -207,6 +225,28 @@ function SubjectsPage() {
                       : "All classes"}
                   </TableCell>
                   <TableCell className="text-right">
+                    {has("subjects.manage") && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Edit ${s.subjectName}`}
+                        onClick={() => {
+                          setEditingId(s.id);
+                          setForm({
+                            subjectName: s.subjectName,
+                            subjectCode: s.subjectCode,
+                            category: s.category,
+                            caMaximum: s.caMaximum,
+                            examMaximum: s.examMaximum,
+                            passMark: s.passMark,
+                            classIds: [...s.classIds],
+                          });
+                          setOpen(true);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
                     {has("subjects.manage") && (
                       <Button
                         size="icon"
