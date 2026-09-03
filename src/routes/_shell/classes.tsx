@@ -53,6 +53,7 @@ function ClassesPage() {
   const { has } = useAuth();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", level: "PRIMARY", arm: "A", formTeacherId: "" });
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const classes = [...(data?.classes ?? [])].sort((a, b) => a.name.localeCompare(b.name));
   const students = data?.students ?? [];
