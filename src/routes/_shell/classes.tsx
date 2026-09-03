@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Pencil, Trash2 } from "lucide-react";
 import { PageHeader, EmptyState } from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,21 +58,28 @@ function ClassesPage() {
   const students = data?.students ?? [];
   const teachers = data?.teachers ?? [];
 
-  async function create() {
+  async function save() {
     if (!orgId) return;
     if (!form.name.trim()) {
       toast.error("Class name is required.");
       return;
     }
-    await classService.create({
+    const payload = {
       name: form.name.trim(),
       level: form.level as ClassLevel,
       arm: form.arm.trim() || "A",
       formTeacherId: form.formTeacherId || undefined,
       organizationId: orgId,
-    });
-    toast.success("Class created");
+    };
+    if (editingId) {
+      await classService.update(editingId, payload);
+      toast.success("Class updated");
+    } else {
+      await classService.create(payload);
+      toast.success("Class created");
+    }
     setForm({ name: "", level: "PRIMARY", arm: "A", formTeacherId: "" });
+    setEditingId(null);
     setOpen(false);
   }
 
@@ -83,7 +90,16 @@ function ClassesPage() {
         description={`${classes.length} classes configured`}
         actions={
           has("classes.manage") && (
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog
+              open={open}
+              onOpenChange={(v) => {
+                setOpen(v);
+                if (!v) {
+                  setEditingId(null);
+                  setForm({ name: "", level: "PRIMARY", arm: "A", formTeacherId: "" });
+                }
+              }}
+            >
               <DialogTrigger asChild>
                 <Button size="sm">
                   <Plus className="mr-1.5 h-4 w-4" /> New class
@@ -91,7 +107,7 @@ function ClassesPage() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Create a class</DialogTitle>
+                  <DialogTitle>{editingId ? "Edit class" : "Create a class"}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-3">
                   <div className="space-y-1.5">
@@ -149,7 +165,7 @@ function ClassesPage() {
                   </div>
                 </div>
                 <DialogFooter>
-                  <Button onClick={create}>Create class</Button>
+                  <Button onClick={save}>{editingId ? "Save changes" : "Create class"}</Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>
@@ -188,6 +204,25 @@ function ClassesPage() {
                     {students.filter((s) => s.classId === c.id && s.status === "ACTIVE").length}
                   </TableCell>
                   <TableCell className="text-right">
+                    {has("classes.manage") && (
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Edit ${c.name}`}
+                        onClick={() => {
+                          setEditingId(c.id);
+                          setForm({
+                            name: c.name,
+                            level: c.level,
+                            arm: c.arm,
+                            formTeacherId: c.formTeacherId ?? "",
+                          });
+                          setOpen(true);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
                     {has("classes.manage") && (
                       <Button
                         size="icon"
