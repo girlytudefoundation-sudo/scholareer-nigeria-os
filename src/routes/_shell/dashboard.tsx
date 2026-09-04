@@ -33,6 +33,7 @@ import { balanceFor } from "@/services";
 import { naira } from "@/lib/constants";
 import { computeClassResults } from "@/lib/result-engine";
 import { useAuth } from "@/lib/auth";
+import { can } from "@/lib/permissions";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_shell/dashboard")({
