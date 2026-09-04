@@ -220,31 +220,46 @@ function DashboardPage() {
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Fee collection trend">
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={stats.collectionByMonth}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis dataKey="month" fontSize={11} />
-              <YAxis fontSize={11} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
-              <Tooltip formatter={(v) => naira(Number(v))} />
-              <Line type="monotone" dataKey="amount" stroke="var(--color-primary)" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
+        {showFinance && (
+          <>
+            <ChartCard title="Fee collection trend">
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={stats.collectionByMonth}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="month" fontSize={11} />
+                  <YAxis fontSize={11} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
+                  <Tooltip formatter={(v) => naira(Number(v))} />
+                  <Line
+                    type="monotone"
+                    dataKey="amount"
+                    stroke="var(--color-primary)"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartCard>
 
-        <ChartCard title="Payment status">
-          <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={85}>
-                {pieData.map((entry) => (
-                  <Cell key={entry.name} fill={entry.color} />
-                ))}
-              </Pie>
-              <Legend />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
+            <ChartCard title="Payment status">
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={50}
+                    outerRadius={85}
+                  >
+                    {pieData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          </>
+        )}
 
         <ChartCard title="Student population by class">
           <ResponsiveContainer width="100%" height={240}>
