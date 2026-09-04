@@ -191,16 +191,25 @@ function DashboardPage() {
           icon={CalendarCheck}
           tone="success"
         />
-        <StatCard label="Students Fully Paid" value={stats.paid} icon={BadgeCheck} tone="success" />
-        <StatCard label="Partially Paid" value={stats.partial} icon={Wallet} tone="warning" />
-        <StatCard label="Students Owing" value={stats.owing} icon={ShieldAlert} tone="danger" />
-        <StatCard
-          label="Fees Collected"
-          value={naira(stats.collected)}
-          hint={`of ${naira(stats.expected)} expected`}
-          icon={CircleDollarSign}
-          tone="primary"
-        />
+        {showFinance && (
+          <>
+            <StatCard
+              label="Students Fully Paid"
+              value={stats.paid}
+              icon={BadgeCheck}
+              tone="success"
+            />
+            <StatCard label="Partially Paid" value={stats.partial} icon={Wallet} tone="warning" />
+            <StatCard label="Students Owing" value={stats.owing} icon={ShieldAlert} tone="danger" />
+            <StatCard
+              label="Fees Collected"
+              value={naira(stats.collected)}
+              hint={`of ${naira(stats.expected)} expected`}
+              icon={CircleDollarSign}
+              tone="primary"
+            />
+          </>
+        )}
         <StatCard
           label="Results Pending Approval"
           value={stats.pending}
