@@ -172,8 +172,10 @@ function DashboardPage() {
         <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
           <li>• {stats.totalStudents} students enrolled</li>
           <li>• {stats.present} present today</li>
-          <li>• {naira(stats.collected)} collected this term</li>
-          <li>• {stats.owing + stats.partial} students have outstanding balances</li>
+          {showFinance && <li>• {naira(stats.collected)} collected this term</li>}
+          {showFinance && (
+            <li>• {stats.owing + stats.partial} students have outstanding balances</li>
+          )}
           <li>• {stats.pendingSubmission} teachers have pending score submissions</li>
           <li>• {stats.pending} results are awaiting approval</li>
         </ul>
