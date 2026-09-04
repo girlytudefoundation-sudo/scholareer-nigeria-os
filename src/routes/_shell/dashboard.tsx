@@ -51,6 +51,7 @@ export const Route = createFileRoute("/_shell/dashboard")({
 function DashboardPage() {
   const { data, loading } = useOrgData();
   const { user } = useAuth();
+  const showFinance = can(user?.role, "finance.view");
 
   const stats = useMemo(() => {
     if (!data?.organization) return null;
