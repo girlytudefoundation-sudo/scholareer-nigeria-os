@@ -67,6 +67,7 @@ function FinancePage() {
   const fees = data?.fees ?? [];
   const payments = data?.payments ?? [];
   const canRecord = has("finance.record");
+  const canView = has("finance.view");
 
   const [payOpen, setPayOpen] = useState(false);
   const [feeOpen, setFeeOpen] = useState(false);
