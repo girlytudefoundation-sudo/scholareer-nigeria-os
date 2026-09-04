@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/command";
 import { useOrgData } from "@/hooks/use-data";
 import { naira } from "@/lib/constants";
+import { useAuth } from "@/lib/auth";
+import { can } from "@/lib/permissions";
 
 export function GlobalSearch({
   open,
@@ -19,6 +21,8 @@ export function GlobalSearch({
 }) {
   const { data } = useOrgData();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const showFinance = can(user?.role, "finance.view");
 
   const go = (to: string) => {
     onOpenChange(false);
@@ -66,21 +70,23 @@ export function GlobalSearch({
           ))}
         </CommandGroup>
 
-        <CommandGroup heading="Payments & Receipts">
-          {(data?.payments ?? []).slice(0, 40).map((p) => {
-            const st = data?.students.find((s) => s.id === p.studentId);
-            return (
-              <CommandItem
-                key={p.id}
-                value={`payment receipt ${p.receiptNumber} ${st?.firstName ?? ""} ${st?.lastName ?? ""}`}
-                onSelect={() => go("/finance/payments")}
-              >
-                {p.receiptNumber} · {st?.firstName} {st?.lastName}
-                <span className="ml-auto text-xs text-muted-foreground">{naira(p.amount)}</span>
-              </CommandItem>
-            );
-          })}
-        </CommandGroup>
+        {showFinance && (
+          <CommandGroup heading="Payments & Receipts">
+            {(data?.payments ?? []).slice(0, 40).map((p) => {
+              const st = data?.students.find((s) => s.id === p.studentId);
+              return (
+                <CommandItem
+                  key={p.id}
+                  value={`payment receipt ${p.receiptNumber} ${st?.firstName ?? ""} ${st?.lastName ?? ""}`}
+                  onSelect={() => go("/finance/payments")}
+                >
+                  {p.receiptNumber} · {st?.firstName} {st?.lastName}
+                  <span className="ml-auto text-xs text-muted-foreground">{naira(p.amount)}</span>
+                </CommandItem>
+              );
+            })}
+          </CommandGroup>
+        )}
 
         <CommandGroup heading="Books">
           {(data?.books ?? []).map((b) => (

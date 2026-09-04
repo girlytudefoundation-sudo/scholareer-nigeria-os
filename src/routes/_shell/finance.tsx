@@ -67,6 +67,7 @@ function FinancePage() {
   const fees = data?.fees ?? [];
   const payments = data?.payments ?? [];
   const canRecord = has("finance.record");
+  const canView = has("finance.view");
 
   const [payOpen, setPayOpen] = useState(false);
   const [feeOpen, setFeeOpen] = useState(false);
@@ -152,6 +153,17 @@ function FinancePage() {
     toast.success("Fee item added");
     setFee({ classId: "", title: "Tuition", amount: "" });
     setFeeOpen(false);
+  }
+
+  if (!canView) {
+    return (
+      <div className="surface-card p-8 text-center">
+        <h2 className="font-display text-lg font-bold">Restricted area</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Finance records are only available to administrators and cashiers.
+        </p>
+      </div>
+    );
   }
 
   return (

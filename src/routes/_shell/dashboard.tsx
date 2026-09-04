@@ -33,6 +33,7 @@ import { balanceFor } from "@/services";
 import { naira } from "@/lib/constants";
 import { computeClassResults } from "@/lib/result-engine";
 import { useAuth } from "@/lib/auth";
+import { can } from "@/lib/permissions";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_shell/dashboard")({
@@ -50,6 +51,7 @@ export const Route = createFileRoute("/_shell/dashboard")({
 function DashboardPage() {
   const { data, loading } = useOrgData();
   const { user } = useAuth();
+  const showFinance = can(user?.role, "finance.view");
 
   const stats = useMemo(() => {
     if (!data?.organization) return null;
@@ -170,8 +172,10 @@ function DashboardPage() {
         <ul className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
           <li>• {stats.totalStudents} students enrolled</li>
           <li>• {stats.present} present today</li>
-          <li>• {naira(stats.collected)} collected this term</li>
-          <li>• {stats.owing + stats.partial} students have outstanding balances</li>
+          {showFinance && <li>• {naira(stats.collected)} collected this term</li>}
+          {showFinance && (
+            <li>• {stats.owing + stats.partial} students have outstanding balances</li>
+          )}
           <li>• {stats.pendingSubmission} teachers have pending score submissions</li>
           <li>• {stats.pending} results are awaiting approval</li>
         </ul>
@@ -187,16 +191,25 @@ function DashboardPage() {
           icon={CalendarCheck}
           tone="success"
         />
-        <StatCard label="Students Fully Paid" value={stats.paid} icon={BadgeCheck} tone="success" />
-        <StatCard label="Partially Paid" value={stats.partial} icon={Wallet} tone="warning" />
-        <StatCard label="Students Owing" value={stats.owing} icon={ShieldAlert} tone="danger" />
-        <StatCard
-          label="Fees Collected"
-          value={naira(stats.collected)}
-          hint={`of ${naira(stats.expected)} expected`}
-          icon={CircleDollarSign}
-          tone="primary"
-        />
+        {showFinance && (
+          <>
+            <StatCard
+              label="Students Fully Paid"
+              value={stats.paid}
+              icon={BadgeCheck}
+              tone="success"
+            />
+            <StatCard label="Partially Paid" value={stats.partial} icon={Wallet} tone="warning" />
+            <StatCard label="Students Owing" value={stats.owing} icon={ShieldAlert} tone="danger" />
+            <StatCard
+              label="Fees Collected"
+              value={naira(stats.collected)}
+              hint={`of ${naira(stats.expected)} expected`}
+              icon={CircleDollarSign}
+              tone="primary"
+            />
+          </>
+        )}
         <StatCard
           label="Results Pending Approval"
           value={stats.pending}
@@ -207,31 +220,46 @@ function DashboardPage() {
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Fee collection trend">
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={stats.collectionByMonth}>
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-              <XAxis dataKey="month" fontSize={11} />
-              <YAxis fontSize={11} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
-              <Tooltip formatter={(v) => naira(Number(v))} />
-              <Line type="monotone" dataKey="amount" stroke="var(--color-primary)" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </ChartCard>
+        {showFinance && (
+          <>
+            <ChartCard title="Fee collection trend">
+              <ResponsiveContainer width="100%" height={240}>
+                <LineChart data={stats.collectionByMonth}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                  <XAxis dataKey="month" fontSize={11} />
+                  <YAxis fontSize={11} tickFormatter={(v) => `${Math.round(Number(v) / 1000)}k`} />
+                  <Tooltip formatter={(v) => naira(Number(v))} />
+                  <Line
+                    type="monotone"
+                    dataKey="amount"
+                    stroke="var(--color-primary)"
+                    strokeWidth={2}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartCard>
 
-        <ChartCard title="Payment status">
-          <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={85}>
-                {pieData.map((entry) => (
-                  <Cell key={entry.name} fill={entry.color} />
-                ))}
-              </Pie>
-              <Legend />
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
+            <ChartCard title="Payment status">
+              <ResponsiveContainer width="100%" height={240}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    innerRadius={50}
+                    outerRadius={85}
+                  >
+                    {pieData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartCard>
+          </>
+        )}
 
         <ChartCard title="Student population by class">
           <ResponsiveContainer width="100%" height={240}>
