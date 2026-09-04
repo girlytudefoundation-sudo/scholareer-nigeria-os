@@ -155,6 +155,17 @@ function FinancePage() {
     setFeeOpen(false);
   }
 
+  if (!canView) {
+    return (
+      <div className="surface-card p-8 text-center">
+        <h2 className="font-display text-lg font-bold">Restricted area</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Finance records are only available to administrators and cashiers.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <PageHeader
