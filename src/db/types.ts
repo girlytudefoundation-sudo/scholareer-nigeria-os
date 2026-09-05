@@ -125,6 +125,8 @@ export interface Student {
   house?: string | undefined;
   admissionDate: string;
   status: StudentStatus;
+  /** Password the school issues for the Student Result Checker portal. */
+  portalPassword?: string | undefined;
   organizationId: ID;
 }
 
