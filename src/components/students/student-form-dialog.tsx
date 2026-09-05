@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StudentAvatar } from "@/components/students/student-avatar";
+import { DEFAULT_STUDENT_PASSWORD } from "@/lib/student-portal";
 import { ACCEPTED_PHOTO_TYPES, PHOTO_PLACEHOLDER_HINT, fileToPassportDataUrl } from "@/lib/image";
 import type { SchoolClass, Student, StudentStatus } from "@/db/types";
 
@@ -44,6 +45,7 @@ export const emptyStudentDraft = (): StudentDraft => ({
   classId: "",
   arm: "A",
   house: "",
+  portalPassword: "",
   admissionDate: new Date().toISOString().slice(0, 10),
   status: "ACTIVE",
 });
