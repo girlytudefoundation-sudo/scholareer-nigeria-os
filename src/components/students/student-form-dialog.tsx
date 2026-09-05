@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { StudentAvatar } from "@/components/students/student-avatar";
+import { DEFAULT_STUDENT_PASSWORD } from "@/lib/student-portal";
 import { ACCEPTED_PHOTO_TYPES, PHOTO_PLACEHOLDER_HINT, fileToPassportDataUrl } from "@/lib/image";
 import type { SchoolClass, Student, StudentStatus } from "@/db/types";
 
@@ -44,6 +45,7 @@ export const emptyStudentDraft = (): StudentDraft => ({
   classId: "",
   arm: "A",
   house: "",
+  portalPassword: "",
   admissionDate: new Date().toISOString().slice(0, 10),
   status: "ACTIVE",
 });
@@ -175,6 +177,13 @@ export function StudentFormDialog({ open, onOpenChange, classes, initial, onSubm
                 placeholder="Auto-generated"
                 value={form.admissionNumber}
                 onChange={(e) => set("admissionNumber", e.target.value)}
+              />
+            </Field>
+            <Field label="Result checker password">
+              <Input
+                placeholder={DEFAULT_STUDENT_PASSWORD}
+                value={form.portalPassword ?? ""}
+                onChange={(e) => set("portalPassword", e.target.value)}
               />
             </Field>
             <Field label="Gender">
