@@ -177,6 +177,13 @@ export function StudentFormDialog({ open, onOpenChange, classes, initial, onSubm
                 onChange={(e) => set("admissionNumber", e.target.value)}
               />
             </Field>
+            <Field label="Result checker password">
+              <Input
+                placeholder={DEFAULT_STUDENT_PASSWORD}
+                value={form.portalPassword ?? ""}
+                onChange={(e) => set("portalPassword", e.target.value)}
+              />
+            </Field>
             <Field label="Gender">
               <Select value={form.gender} onValueChange={(v) => set("gender", v as Student["gender"])}>
                 <SelectTrigger>
