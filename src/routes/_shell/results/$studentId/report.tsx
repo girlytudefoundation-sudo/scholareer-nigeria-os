@@ -136,13 +136,6 @@ function ReportCardPage() {
   }
 
   const { org, student: s, cls, agg, assessment, attendance, ratingScale } = view;
-  const subjectRows = (agg?.subjects ?? []).map((sub) => ({
-    ...sub,
-    name: view.subjects.find((x) => x.id === sub.subjectId)?.subjectName ?? "—",
-  }));
-  const attendancePct = attendance.daysOpened
-    ? Math.round((attendance.present / attendance.daysOpened) * 100)
-    : 0;
 
   async function saveDetails() {
     if (!orgId || !view) return;
@@ -168,8 +161,6 @@ function ReportCardPage() {
     await audit(orgId, user?.name ?? "System", "UPDATE", "Result", view.student.id, "Report details");
     toast.success("Report details saved");
   }
-
-  const ratingOf = (map: Record<string, number>, trait: string) => map[trait] ?? 0;
 
   return (
     <div>
