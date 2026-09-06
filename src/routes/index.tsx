@@ -62,11 +62,16 @@ function HomePage() {
             </p>
           </div>
         </div>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/login">
-            <LogIn className="mr-1.5 h-4 w-4" /> Sign in
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/student">Check result</Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/login">
+              <LogIn className="mr-1.5 h-4 w-4" /> Sign in
+            </Link>
+          </Button>
+        </div>
       </header>
 
       <main className="mx-auto max-w-5xl px-5 py-10 sm:py-16">
@@ -104,6 +109,9 @@ function HomePage() {
             >
               {busy && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Load Demo School
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/student">Student Result Checker</Link>
             </Button>
           </div>
         </section>
