@@ -173,7 +173,7 @@ function StudentPortalPage() {
           <StudentAvatar
             firstName={student.firstName}
             lastName={student.lastName}
-            src={student.passport}
+            passport={student.passport}
             className="h-16 w-16 text-lg"
           />
           <div className="min-w-0">
