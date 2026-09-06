@@ -281,7 +281,7 @@ export async function seedDemoSchool() {
     classId: s.classId,
     session: SESSION,
     term: TERM,
-    status: i < 2 ? "APPROVED" : i < 3 ? "SUBMITTED" : "DRAFT",
+    status: i < 2 ? "PUBLISHED" : i < 3 ? "APPROVED" : "DRAFT",
     accessBlocked: i === 2,
     blockReason: i === 2 ? "Blocked manually by administrator" : undefined,
     manualOverride: i === 2 ? "BLOCK" : null,
