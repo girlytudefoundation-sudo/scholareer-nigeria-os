@@ -10,8 +10,12 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as ShellRouteImport } from './routes/_shell'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as ShellAttendanceRouteImport } from './routes/_shell/attendance'
 import { Route as ShellAuditLogRouteImport } from './routes/_shell/audit-log'
 import { Route as ShellClassesRouteImport } from './routes/_shell/classes'
@@ -38,14 +42,33 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ShellRoute = ShellRouteImport.update({
   id: '/_shell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ShellAttendanceRoute = ShellAttendanceRouteImport.update({
   id: '/attendance',
@@ -151,7 +174,10 @@ const ShellResultsStudentIdReportRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/attendance': typeof ShellAttendanceRoute
   '/audit-log': typeof ShellAuditLogRoute
   '/classes': typeof ShellClassesRoute
@@ -175,7 +201,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/attendance': typeof ShellAttendanceRoute
   '/audit-log': typeof ShellAuditLogRoute
   '/classes': typeof ShellClassesRoute
@@ -200,8 +229,12 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/_shell': typeof ShellRouteWithChildren
+  '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_shell/attendance': typeof ShellAttendanceRoute
   '/_shell/audit-log': typeof ShellAuditLogRoute
   '/_shell/classes': typeof ShellClassesRoute
@@ -227,7 +260,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/login'
+    | '/admin'
+    | '/account'
     | '/attendance'
     | '/audit-log'
     | '/classes'
@@ -251,7 +287,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/login'
+    | '/admin'
+    | '/account'
     | '/attendance'
     | '/audit-log'
     | '/classes'
@@ -275,8 +314,12 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/_shell'
+    | '/auth'
     | '/login'
+    | '/_authenticated/admin'
+    | '/_authenticated/account'
     | '/_shell/attendance'
     | '/_shell/audit-log'
     | '/_shell/classes'
@@ -301,7 +344,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   ShellRoute: typeof ShellRouteWithChildren
+  AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
   StudentPortalRoute: typeof StudentPortalRoute
   StudentIndexRoute: typeof StudentIndexRoute
@@ -316,11 +361,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_shell': {
       id: '/_shell'
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof ShellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -329,6 +388,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_shell/attendance': {
       id: '/_shell/attendance'
@@ -473,6 +546,19 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRoute
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRoute,
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 interface ShellRouteChildren {
   ShellAttendanceRoute: typeof ShellAttendanceRoute
   ShellAuditLogRoute: typeof ShellAuditLogRoute
@@ -519,7 +605,9 @@ const ShellRouteWithChildren = ShellRoute._addFileChildren(ShellRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   ShellRoute: ShellRouteWithChildren,
+  AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
   StudentPortalRoute: StudentPortalRoute,
   StudentIndexRoute: StudentIndexRoute,
