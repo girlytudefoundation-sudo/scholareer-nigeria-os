@@ -31,10 +31,12 @@ import { Route as ShellTranscriptsRouteImport } from './routes/_shell/transcript
 import { Route as ShellVisitorsRouteImport } from './routes/_shell/visitors'
 import { Route as StudentIndexRouteImport } from './routes/student/index'
 import { Route as StudentPortalRouteImport } from './routes/student/portal'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as ShellResultsIndexRouteImport } from './routes/_shell/results/index'
 import { Route as ShellResultsEntryRouteImport } from './routes/_shell/results/entry'
 import { Route as ShellStudentsIndexRouteImport } from './routes/_shell/students/index'
 import { Route as ShellStudentsStudentIdRouteImport } from './routes/_shell/students/$studentId'
+import { Route as AuthenticatedAdminSchoolsIndexRouteImport } from './routes/_authenticated/admin/schools.index'
 import { Route as ShellResultsStudentIdReportRouteImport } from './routes/_shell/results/$studentId/report'
 
 const IndexRoute = IndexRouteImport.update({
@@ -145,6 +147,11 @@ const StudentPortalRoute = StudentPortalRouteImport.update({
   path: '/student/portal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const ShellResultsIndexRoute = ShellResultsIndexRouteImport.update({
   id: '/results/',
   path: '/results/',
@@ -165,6 +172,12 @@ const ShellStudentsStudentIdRoute = ShellStudentsStudentIdRouteImport.update({
   path: '/students/$studentId',
   getParentRoute: () => ShellRoute,
 } as any)
+const AuthenticatedAdminSchoolsIndexRoute =
+  AuthenticatedAdminSchoolsIndexRouteImport.update({
+    id: '/schools/',
+    path: '/schools/',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const ShellResultsStudentIdReportRoute =
   ShellResultsStudentIdReportRouteImport.update({
     id: '/results/$studentId/report',
@@ -176,7 +189,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
-  '/admin': typeof AuthenticatedAdminRouteRoute
+  '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/account': typeof AuthenticatedAccountRoute
   '/attendance': typeof ShellAttendanceRoute
   '/audit-log': typeof ShellAuditLogRoute
@@ -195,15 +208,16 @@ export interface FileRoutesByFullPath {
   '/student/': typeof StudentIndexRoute
   '/results/entry': typeof ShellResultsEntryRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
   '/results/': typeof ShellResultsIndexRoute
   '/students/': typeof ShellStudentsIndexRoute
   '/results/$studentId/report': typeof ShellResultsStudentIdReportRoute
+  '/admin/schools/': typeof AuthenticatedAdminSchoolsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
-  '/admin': typeof AuthenticatedAdminRouteRoute
   '/account': typeof AuthenticatedAccountRoute
   '/attendance': typeof ShellAttendanceRoute
   '/audit-log': typeof ShellAuditLogRoute
@@ -222,9 +236,11 @@ export interface FileRoutesByTo {
   '/student': typeof StudentIndexRoute
   '/results/entry': typeof ShellResultsEntryRoute
   '/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
   '/results': typeof ShellResultsIndexRoute
   '/students': typeof ShellStudentsIndexRoute
   '/results/$studentId/report': typeof ShellResultsStudentIdReportRoute
+  '/admin/schools': typeof AuthenticatedAdminSchoolsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -233,7 +249,7 @@ export interface FileRoutesById {
   '/_shell': typeof ShellRouteWithChildren
   '/auth': typeof AuthRoute
   '/login': typeof LoginRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRouteRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_shell/attendance': typeof ShellAttendanceRoute
   '/_shell/audit-log': typeof ShellAuditLogRoute
@@ -252,9 +268,11 @@ export interface FileRoutesById {
   '/student/': typeof StudentIndexRoute
   '/_shell/results/entry': typeof ShellResultsEntryRoute
   '/_shell/students/$studentId': typeof ShellStudentsStudentIdRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_shell/results/': typeof ShellResultsIndexRoute
   '/_shell/students/': typeof ShellStudentsIndexRoute
   '/_shell/results/$studentId/report': typeof ShellResultsStudentIdReportRoute
+  '/_authenticated/admin/schools/': typeof AuthenticatedAdminSchoolsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -281,15 +299,16 @@ export interface FileRouteTypes {
     | '/student/'
     | '/results/entry'
     | '/students/$studentId'
+    | '/admin/'
     | '/results/'
     | '/students/'
     | '/results/$studentId/report'
+    | '/admin/schools/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/login'
-    | '/admin'
     | '/account'
     | '/attendance'
     | '/audit-log'
@@ -308,9 +327,11 @@ export interface FileRouteTypes {
     | '/student'
     | '/results/entry'
     | '/students/$studentId'
+    | '/admin'
     | '/results'
     | '/students'
     | '/results/$studentId/report'
+    | '/admin/schools'
   id:
     | '__root__'
     | '/'
@@ -337,9 +358,11 @@ export interface FileRouteTypes {
     | '/student/'
     | '/_shell/results/entry'
     | '/_shell/students/$studentId'
+    | '/_authenticated/admin/'
     | '/_shell/results/'
     | '/_shell/students/'
     | '/_shell/results/$studentId/report'
+    | '/_authenticated/admin/schools/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -508,6 +531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentPortalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_shell/results/': {
       id: '/_shell/results/'
       path: '/results'
@@ -536,6 +566,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShellStudentsStudentIdRouteImport
       parentRoute: typeof ShellRoute
     }
+    '/_authenticated/admin/schools/': {
+      id: '/_authenticated/admin/schools/'
+      path: '/schools'
+      fullPath: '/admin/schools/'
+      preLoaderRoute: typeof AuthenticatedAdminSchoolsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_shell/results/$studentId/report': {
       id: '/_shell/results/$studentId/report'
       path: '/results/$studentId/report'
@@ -546,13 +583,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminSchoolsIndexRoute: typeof AuthenticatedAdminSchoolsIndexRoute
+}
+
+const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
+  {
+    AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+    AuthenticatedAdminSchoolsIndexRoute: AuthenticatedAdminSchoolsIndexRoute,
+  }
+
+const AuthenticatedAdminRouteRouteWithChildren =
+  AuthenticatedAdminRouteRoute._addFileChildren(
+    AuthenticatedAdminRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRoute
+  AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRoute,
+  AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedAccountRoute: AuthenticatedAccountRoute,
 }
 
