@@ -368,6 +368,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_claim_platform_owner: { Args: never; Returns: boolean }
       claim_platform_owner: { Args: never; Returns: boolean }
       has_role: {
         Args: {
