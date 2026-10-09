@@ -1,9 +1,10 @@
 # Scholareer production upgrade
 
 ## Phase 1 — Foundation + Super Admin (in progress)
+- [x] Confirm Lovable Cloud is the target; no external project handoff needed
 - [x] Move to Lovable Cloud; platform database (schools, plans, subscriptions, payments, settings, audit)
 - [x] Secure server actions for all Super Admin operations
-- [ ] Platform sign-in + owner setup
+- [ ] Platform sign-in + owner setup (restricted to verified imohtalit@gmail.com)
 - [ ] Super Admin panel: overview, schools, school detail (status/subscription/payments/export/delete), plans, payments, settings, audit log
 
 ## Later phases
