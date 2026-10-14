@@ -15,6 +15,13 @@
       "when": 1791556112914,
       "tag": "0001_tighten_platform_owner_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791993339357,
+      "tag": "0002_serialize_owner_claim_and_limit_helpers",
+      "breakpoints": true
     }
   ]
 }
