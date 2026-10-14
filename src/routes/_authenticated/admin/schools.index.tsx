@@ -47,7 +47,10 @@ function SchoolsPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.planId) return toast.error("Choose a subscription plan.");
+    if (!form.planId) {
+      toast.error("Choose a subscription plan.");
+      return;
+    }
     setBusy(true);
     try {
       const r = await create({ data: { ...form, code: form.code.toUpperCase() } });
