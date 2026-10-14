@@ -29,6 +29,8 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Manage students, academics, results and finance in one offline-first platform.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: HomePage,
