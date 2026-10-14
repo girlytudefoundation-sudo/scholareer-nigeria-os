@@ -29,11 +29,14 @@ const schema = z.object({
   fullName: z.string().trim().max(120).optional(),
 });
 
+const ownerEmail = "imohtalit@gmail.com";
+
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"in" | "up">("in");
   const [form, setForm] = useState({ email: "", password: "", fullName: "" });
   const [busy, setBusy] = useState(false);
+  const canSetUpOwner = form.email.trim().toLowerCase() === ownerEmail;
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -44,7 +47,14 @@ function AuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const parsed = schema.safeParse(form);
-    if (!parsed.success) return toast.error(parsed.error.issues[0]?.message);
+    if (!parsed.success) {
+      toast.error(parsed.error.issues[0]?.message);
+      return;
+    }
+    if (mode === "up" && parsed.data.email.toLowerCase() !== ownerEmail) {
+      toast.error("Platform setup is restricted to the designated owner account.");
+      return;
+    }
     setBusy(true);
     try {
       if (mode === "in") {
@@ -97,9 +107,15 @@ function AuthPage() {
             {mode === "in" ? "Sign in" : "Create account"}
           </Button>
         </form>
-        <button type="button" className="mt-4 w-full text-center text-sm text-primary hover:underline" onClick={() => setMode(mode === "in" ? "up" : "in")}>
-          {mode === "in" ? "Setting up the platform? Create the owner account" : "Already have an account? Sign in"}
-        </button>
+        {mode === "in" && canSetUpOwner ? (
+          <Button type="button" variant="link" className="mt-3 w-full" onClick={() => setMode("up")}>
+            Set up the platform owner account
+          </Button>
+        ) : mode === "up" ? (
+          <Button type="button" variant="link" className="mt-3 w-full" onClick={() => setMode("in")}>
+            Already have an account? Sign in
+          </Button>
+        ) : null}
         <p className="mt-4 text-center text-xs text-muted-foreground">
           <Link to="/" className="hover:underline">Back to home</Link>
         </p>

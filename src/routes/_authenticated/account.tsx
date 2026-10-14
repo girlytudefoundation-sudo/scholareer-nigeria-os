@@ -28,13 +28,14 @@ function AccountPage() {
     queryKey: ["account"],
     queryFn: async () => {
       const { data: u } = await supabase.auth.getUser();
-      const uid = u.user!.id;
-      const [{ data: isAdmin }, { data: ownerExists }, { data: memberships }] = await Promise.all([
+      if (!u.user) throw new Error("Sign in again to continue.");
+      const uid = u.user.id;
+      const [{ data: isAdmin }, { data: canClaim }, { data: memberships }] = await Promise.all([
         supabase.rpc("has_role", { _user_id: uid, _role: "super_admin" }),
-        supabase.rpc("platform_owner_exists"),
+        supabase.rpc("can_claim_platform_owner"),
         supabase.from("school_members").select("role, schools(id, name, code, status, status_reason)").eq("user_id", uid),
       ]);
-      return { email: u.user!.email, isAdmin: !!isAdmin, ownerExists: !!ownerExists, memberships: memberships ?? [] };
+      return { email: u.user.email, isAdmin: !!isAdmin, canClaim: !!canClaim, memberships: memberships ?? [] };
     },
   });
 
@@ -44,12 +45,21 @@ function AccountPage() {
 
   async function claim() {
     setClaiming(true);
-    const { data: ok, error } = await supabase.rpc("claim_platform_owner");
-    setClaiming(false);
-    if (error || !ok) return toast.error("The platform already has an owner.");
-    toast.success("You are now the platform owner.");
-    qc.invalidateQueries();
-    refetch();
+    try {
+      const { data: ok, error } = await supabase.rpc("claim_platform_owner");
+      if (error) throw error;
+      if (!ok) {
+        toast.error("This account is not eligible to claim platform ownership.");
+        return;
+      }
+      toast.success("You are now the platform owner.");
+      await qc.invalidateQueries();
+      await refetch();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not claim platform ownership.");
+    } finally {
+      setClaiming(false);
+    }
   }
 
   async function signOut() {
@@ -73,7 +83,7 @@ function AccountPage() {
         <Button variant="outline" size="sm" onClick={signOut}><LogOut className="mr-1 h-4 w-4" />Sign out</Button>
       </div>
 
-      {!data.ownerExists && (
+      {data.canClaim && (
         <div className="surface-card mb-4 p-5">
           <h2 className="font-semibold">Set up the platform</h2>
           <p className="mt-1 text-sm text-muted-foreground">No platform owner exists yet. Claim ownership to manage schools, subscriptions and billing. This can only be done once.</p>

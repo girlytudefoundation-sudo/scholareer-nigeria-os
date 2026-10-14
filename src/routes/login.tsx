@@ -18,6 +18,8 @@ export const Route = createFileRoute("/login")({
       { name: "description", content: "Sign in to Scholareer, the school operating system." },
       { property: "og:title", content: "Sign in — Scholareer School OS" },
       { property: "og:description", content: "Where Scholarship Meets Career." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: LoginPage,
@@ -160,6 +162,9 @@ function LoginPage() {
 
           <p className="mt-6 text-center text-xs text-muted-foreground">
             New here? <Link to="/" className="font-medium text-primary underline">Start onboarding</Link>
+          </p>
+          <p className="mt-3 text-center text-xs">
+            <Link to="/student" className="font-medium text-primary underline">Student Result Checker</Link>
           </p>
         </div>
       </div>
