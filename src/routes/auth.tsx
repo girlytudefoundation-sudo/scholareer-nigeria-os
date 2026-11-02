@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2, ShieldCheck } from "lucide-react";
 import { z } from "zod";
+import { ownerSetupAvailable } from "@/lib/platform.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,12 +37,15 @@ function AuthPage() {
   const [mode, setMode] = useState<"in" | "up">("in");
   const [form, setForm] = useState({ email: "", password: "", fullName: "" });
   const [busy, setBusy] = useState(false);
-  const canSetUpOwner = form.email.trim().toLowerCase() === ownerEmail;
+  const [setupAvailable, setSetupAvailable] = useState<boolean | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) navigate({ to: "/account", replace: true });
     });
+    ownerSetupAvailable()
+      .then((r) => setSetupAvailable(r.available))
+      .catch(() => setSetupAvailable(false));
   }, [navigate]);
 
   async function submit(e: React.FormEvent) {
@@ -107,14 +111,17 @@ function AuthPage() {
             {mode === "in" ? "Sign in" : "Create account"}
           </Button>
         </form>
-        {mode === "in" && canSetUpOwner ? (
-          <Button type="button" variant="link" className="mt-3 w-full" onClick={() => setMode("up")}>
-            Set up the platform owner account
-          </Button>
-        ) : mode === "up" ? (
+        {mode === "up" ? (
           <Button type="button" variant="link" className="mt-3 w-full" onClick={() => setMode("in")}>
             Already have an account? Sign in
           </Button>
+        ) : setupAvailable ? (
+          <div className="mt-4 space-y-1 text-center">
+            <p className="text-xs text-muted-foreground">First-time platform setup?</p>
+            <Button type="button" variant="link" className="w-full" onClick={() => setMode("up")}>
+              Set up the platform owner account
+            </Button>
+          </div>
         ) : null}
         <p className="mt-4 text-center text-xs text-muted-foreground">
           <Link to="/" className="hover:underline">Back to home</Link>

@@ -395,3 +395,10 @@ export const runBillingCheck = createServerFn({ method: "POST" })
     }
     return { overdue, suspended };
   });
+
+// ---------- Public: whether first-time platform owner setup is still open ----------
+export const ownerSetupAvailable = createServerFn({ method: "GET" }).handler(async () => {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("platform_owner_exists");
+  return { available: !error && !data };
+});
