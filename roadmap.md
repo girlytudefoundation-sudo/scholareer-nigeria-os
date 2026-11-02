@@ -6,9 +6,9 @@
 - [x] Secure server actions for all Super Admin operations
 - [x] Platform sign-in + owner setup (claim enforced by verified-email database function)
 - [x] Super Admin panel: overview, schools, school detail (status/subscription/payments/export/delete), plans, payments, settings, audit log
-- [ ] Verify owner-only setup and Super Admin flows in the preview; resolve remaining typecheck issues
+- [ ] Verify owner-only setup and Super Admin flows in the preview; blocked until the owner creates an account and confirms the verification email. Preview typecheck is passing.
 
 ## Later phases
 - [ ] Move school modules (students, classes, results, attendance, finance, etc.) from browser storage to Cloud with school-status checks
 - [ ] Multi-teacher result entry, RACE + result checker on Cloud
-- [ ] Online payments (Paystack/Flutterwave) — user chose manual recording for now
+- [ ] Online payments (Paystack/Flutterwave) — payment provider has not been selected; manual payment recording is available.

@@ -68,6 +68,9 @@ function HomePage() {
           <Button asChild variant="ghost" size="sm">
             <Link to="/student">Check result</Link>
           </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/auth">Platform sign in</Link>
+          </Button>
           <Button asChild variant="outline" size="sm">
             <Link to="/login">
               <LogIn className="mr-1.5 h-4 w-4" /> Sign in
